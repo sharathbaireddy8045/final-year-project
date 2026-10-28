@@ -1,0 +1,510 @@
+/* ========== Global Styles ========== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    /* Fixed background container to ensure image never moves and no white space shows */
+    background: url('images/wp15400585.jpg') no-repeat center center fixed;
+    background-size: cover;
+    font-family: 'Arial', sans-serif;
+    color: #E0E0E0;
+    padding-top: 100px; /* Safe space below the navigation bar across all screens */
+    overflow-x: hidden;
+    text-align: center;
+}
+
+/* Light Mode Support - Keeping background behaviors identical */
+@media (prefers-color-scheme: light) {
+    body {
+        background: url('images/wp15400585.jpg') no-repeat center center fixed;
+        background-size: cover;
+        color: #111111;
+    }
+}
+
+/* Hide navigation functional engine tabs ONLY */
+input.nav-tab-engine {
+    display: none !important;
+}
+
+/* ========== Navigation Bar ========== */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(20, 20, 20, 0.95);
+    padding: 15px 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0px 4px 10px rgba(255, 215, 0, 0.3);
+    z-index: 1000;
+    flex-wrap: wrap; /* Allows tabs to wrap neatly on tiny mobile screens */
+}
+
+.navbar label {
+    font-size: 16px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    border-radius: 8px;
+    color: #FFD700;
+    white-space: nowrap; /* Prevents text splitting inside a single tab button */
+}
+
+.navbar label:hover {
+    font-weight: bold;
+    color: #C0C0C0;
+}
+
+/* Pure CSS Engine: Active Tab Color State Links */
+#home-tab:checked ~ .navbar label[for="home-tab"],
+#about-tab:checked ~ .navbar label[for="about-tab"],
+#decor-tab:checked ~ .navbar label[for="decor-tab"],
+#schedule-tab:checked ~ .navbar label[for="schedule-tab"],
+#venue-tab:checked ~ .navbar label[for="venue-tab"],
+#rsvp-tab:checked ~ .navbar label[for="rsvp-tab"],
+#contact-tab:checked ~ .navbar label[for="contact-tab"] {
+    font-weight: bold;
+    color: #ffffff;
+    background: rgba(255, 215, 0, 0.2);
+}
+
+/* ========== Pages Engine Layout ========== */
+.page {
+    display: none;
+    padding: 40px 20px;
+    width: 90%;
+    max-width: 1000px; /* Fits comfortably on broad Windows layouts */
+    margin: 0 auto 40px auto;
+    min-height: calc(100vh - 140px); /* Adjust dynamically to viewport without clipping */
+    background: rgba(0, 0, 0, 0.82); /* Slightly darker background for better text readability over the image */
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+}
+
+/* Tab Switching Logical Rules */
+#home-tab:checked ~ #home,
+#about-tab:checked ~ #about,
+#decor-tab:checked ~ #decor,
+#schedule-tab:checked ~ #schedule,
+#venue-tab:checked ~ #venue,
+#rsvp-tab:checked ~ #rsvp,
+#contact-tab:checked ~ #contact {
+    display: block;
+    animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========== Menu Styles ========== */
+.menu-container {
+    width: 100%;
+    max-width: 850px;
+    margin: 20px auto;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
+}
+
+.menu-category-title {
+    font-size: 22px;
+    color: #FFD700;
+    margin: 25px 0 10px 0;
+    text-align: left;
+    border-bottom: 1px dashed #FFD700;
+    padding-bottom: 5px;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.05);
+    margin: 12px 0;
+    padding: 15px;
+    border-radius: 8px;
+    gap: 15px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.menu-item:hover {
+    transform: scale(1.01);
+    box-shadow: 0px 4px 8px rgba(255, 215, 0, 0.4);
+}
+
+.menu-item img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0; /* Prevents image distortions on smaller viewports */
+    border: 2px solid #FFD700;
+    cursor: pointer;
+}
+
+.menu-item-info {
+    flex: 1;
+    text-align: left;
+}
+
+.menu-item-title {
+    font-weight: bold;
+    font-size: 18px;
+    color: #FFD700;
+    cursor: pointer;
+}
+
+.menu-item-title span, .item-cost {
+    font-size: 14px;
+    color: #fff;
+    font-weight: normal;
+}
+
+.menu-item-description {
+    font-size: 14px;
+    color: #ccc;
+    margin-top: 4px;
+}
+
+.quantity-selector {
+    margin-top: 8px;
+}
+
+.quantity-selector input {
+    width: 60px !important;
+    padding: 5px !important;
+    display: inline-block !important;
+    margin-left: 5px;
+}
+
+.checkbox-wrapper input[type="checkbox"] {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+/* ========== Decorations Grid ========== */
+.decor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    padding: 20px 0;
+    width: 100%;
+}
+
+.decor-item {
+    background: rgba(0, 0, 0, 0.6);
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+    transition: 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.decor-item img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.decor-item p {
+    margin: 12px 0 8px 0;
+    font-size: 16px;
+    font-weight: bold;
+    color: gold;
+}
+
+.decor-item:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+}
+
+/* ========== Schedule Styles ========== */
+.schedule-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 800px;
+    margin: 20px auto;
+}
+
+.schedule-day {
+    padding: 20px;
+    color: white;
+    background: rgba(20, 20, 20, 0.8);
+    border: 1px solid gold;
+    border-left: 5px solid gold;
+    border-radius: 10px;
+    text-align: left;
+}
+
+.schedule-day h3 {
+    color: gold;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.schedule-day ul {
+    margin-top: 10px;
+    padding-left: 20px;
+}
+
+.schedule-day ul li {
+    padding: 4px 0;
+    color: #ccc;
+}
+
+/* ========== Venue Styles ========== */
+.venue-item {
+    width: 100%;
+    padding: 10px;
+}
+
+.venue-item img.qr-img {
+    width: 160px;
+    height: 160px;
+    margin: 15px auto;
+    border: 3px solid gold;
+    border-radius: 8px;
+    display: block;
+}
+
+.venue-item a {
+    color: #FFD700;
+    font-size: 16px;
+    text-decoration: underline;
+    word-break: break-all; /* Prevents overflow links from breaking mobile designs */
+}
+
+/* ========== RSVP Form Styles ========== */
+form.rsvp-form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(30, 30, 30, 0.95);
+    padding: 25px;
+    width: 100%;
+    max-width: 600px;
+    margin: 10px auto;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(255, 215, 0, 0.3);
+    color: white;
+}
+
+form.rsvp-form-container label {
+    align-self: flex-start;
+    margin-top: 15px;
+    color: #FFD700;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.form-input, .text-box {
+    display: block !important;
+    width: 100%;
+    padding: 12px;
+    margin-top: 5px;
+    font-size: 16px;
+    color: white;
+    background: rgba(50, 50, 50, 0.8);
+    border: 2px solid gold;
+    border-radius: 8px;
+    outline: none;
+    transition: 0.3s;
+}
+
+.text-box {
+    height: 110px;
+    resize: none;
+}
+
+.form-input:focus, .text-box:focus {
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+    background: rgba(70, 70, 70, 0.9);
+}
+
+.error-message {
+    color: #ff4d4d;
+    font-size: 14px;
+    text-align: left;
+    width: 100%;
+    margin-top: 4px;
+}
+
+#total-cost-display, #advance-payment-display {
+    font-size: 18px;
+    font-weight: bold;
+    color: #FFD700;
+    margin-top: 15px;
+}
+
+.booking-note {
+    font-size: 13px;
+    color: #aaa;
+    margin-top: 15px;
+    line-height: 1.4;
+}
+
+/* ========== Global Custom Buttons ========== */
+.btn {
+    width: 100%;
+    max-width: 280px;
+    background: #FFD700;
+    color: black;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: transform 0.2s, background 0.3s;
+}
+
+.btn:hover {
+    background: #C0C0C0;
+    transform: scale(1.03);
+}
+
+/* ========== Image Modal Styling ========== */
+.image-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.92);
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}
+
+.modal-content {
+    max-width: 95%;
+    max-height: 75%;
+    border: 2px solid gold;
+    border-radius: 8px;
+    object-fit: contain;
+}
+
+.close-button {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    color: #fff;
+    font-size: 38px;
+    cursor: pointer;
+}
+
+.caption-text {
+    color: gold;
+    margin-top: 15px;
+    font-size: 18px;
+    padding: 0 10px;
+}
+
+/* Back to Top Feature button */
+.back-to-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: gold;
+    color: black;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 99;
+    display: none;
+}
+
+/* ========== Menu Detail Page Styling ========== */
+.menu-detail-page {
+    width: 100%;
+    padding: 10px 0;
+}
+.detail-title {
+    font-size: 24px;
+    color: #FFD700;
+    margin: 15px 0;
+}
+.detail-image {
+    max-width: 100%;
+    width: 350px;
+    height: auto;
+    border-radius: 10px;
+    border: 2px solid #FFD700;
+    margin-bottom: 15px;
+}
+.detail-description, .detail-additional {
+    font-size: 16px;
+    margin: 10px 0;
+    color: #eee;
+}
+
+/* ========== Mobile Breakpoints (< 768px) ========== */
+@media (max-width: 768px) {
+    body {
+        padding-top: 140px; /* Gives more clearance since links wrap onto multiple lines */
+    }
+    .navbar {
+        gap: 8px;
+        padding: 10px 5px;
+    }
+    .navbar label {
+        font-size: 13px;
+        padding: 6px 10px;
+    }
+    .page {
+        width: 95%;
+        padding: 20px 12px;
+    }
+    .menu-item {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px 15px;
+    }
+    .menu-item img {
+        margin-right: 0;
+    }
+    .menu-item-info {
+        text-align: center;
+        width: 100%;
+    }
+    .quantity-selector {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 12px;
+    }
+    .decor-grid {
+        grid-template-columns: 1fr; /* Stack columns single-file on mobile viewports */
+    }
+}

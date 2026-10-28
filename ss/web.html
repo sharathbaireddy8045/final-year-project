@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Invitation</title>
+    <link rel="stylesheet" href="web.css">
+</head>
+<body>
+    <!-- Scoped Radio Buttons for Navigation Engine Only -->
+    <input type="radio" id="home-tab" name="tabs" class="nav-tab-engine" checked>
+    <input type="radio" id="about-tab" name="tabs" class="nav-tab-engine">
+    <input type="radio" id="decor-tab" name="tabs" class="nav-tab-engine">
+    <input type="radio" id="schedule-tab" name="tabs" class="nav-tab-engine">
+    <input type="radio" id="venue-tab" name="tabs" class="nav-tab-engine">
+    <input type="radio" id="rsvp-tab" name="tabs" class="nav-tab-engine">
+    <input type="radio" id="contact-tab" name="tabs" class="nav-tab-engine">
+
+    <nav class="navbar">
+        <label for="home-tab">Home</label>
+        <label for="about-tab">About</label>
+        <label for="decor-tab">Dishes & Decor</label>
+        <label for="schedule-tab">Schedule</label>
+        <label for="venue-tab">Venue</label>
+        <label for="rsvp-tab">RSVP</label>
+        <label for="contact-tab">Contact</label>
+        <div class="underline"></div>
+    </nav>
+
+    <section id="home" class="page">
+        <div>
+            <h1>You're Invited!</h1>
+            <p>Join us for a special celebration of joy and togetherness.</p>
+            <button id="home-rsvp-btn" class="btn">RESPOND NOW</button>
+        </div>
+    </section>
+
+    <section id="about" class="page">
+        <div class="about-container">
+            <h2 class="section-title">Discover what Awaits:</h2>
+            <p>This is a wonderful event to bring together family and friends for a joyous celebration.</p>
+            <p>Get ready for an extraordinary experience! This event is a vibrant celebration designed to bring together family and friends for days filled with joy, connection, and discovery.</p>
+            <p>Join us to create unforgettable memories, learn new skills, explore exciting innovations, and simply enjoy the spirit of togetherness.</p>
+        </div>
+    </section>
+
+    <section id="decor" class="page">
+        <div id="main-decor-content">
+            <h2 class="section-title">Event Menu</h2>
+            <div class="menu-container">
+                <div class="menu-details">
+                    <p class="menu-category-title">⭐ Starters & Appetizers</p>
+                </div>
+                <div class="menu-item">
+                    <img src="images/Chinese-Spring-Rolls_1200x800.jpg" alt="Spring Rolls">
+                    <div class="menu-item-info">
+                        <p class="menu-item-title" data-item-id="spring-rolls">Spring Rolls <br><span>(₹50 per plate)</span></p>
+                        <p class="menu-item-description">Crispy rolls stuffed with fresh vegetables and served with a tangy dip.</p>
+                        <div class="quantity-selector" style="display:none;">
+                            <label for="spring-rolls-qty">Plates:</label>
+                            <input type="number" id="spring-rolls-qty" class="item-quantity" data-item-id="spring-rolls" value="0" min="0">
+                        </div>
+                    </div>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="item-checkbox" data-item-name="Spring Rolls" data-item-type="menu" data-item-cost="50" data-item-id="spring-rolls">
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <img src="images/Chicken-Tikka-Kebab-Skewers-2-1600-720x720.jpg" alt="Chicken Tikka">
+                    <div class="menu-item-info">
+                        <p class="menu-item-title" data-item-id="chicken-tikka">Chicken Tikka <br><span class="item-cost">(₹120 per plate)</span></p>
+                        <p class="menu-item-description">Juicy, marinated chicken grilled to perfection with Indian spices.</p>
+                        <div class="quantity-selector" style="display:none;">
+                            <label for="chicken-tikka-qty">Plates:</label>
+                            <input type="number" id="chicken-tikka-qty" class="item-quantity" data-item-id="chicken-tikka" value="0" min="0">
+                        </div>
+                    </div>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="item-checkbox" data-item-name="Chicken Tikka" data-item-type="menu" data-item-cost="120" data-item-id="chicken-tikka">
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <img src="images/23_10_2021_17_57_114_pm.webp" alt="Bruschetta">
+                    <div class="menu-item-info">
+                        <p class="menu-item-title" data-item-id="bruschetta">Bruschetta <br><span class="item-cost">(₹80 per plate)</span></p>
+                        <p class="menu-item-description">Toasted bread topped with fresh tomatoes, basil, and olive oil.</p>
+                        <div class="quantity-selector" style="display:none;">
+                            <label for="bruschetta-qty">Plates:</label>
+                            <input type="number" id="bruschetta-qty" class="item-quantity" data-item-id="bruschetta" value="0" min="0">
+                        </div>
+                    </div>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="item-checkbox" data-item-name="Bruschetta" data-item-type="menu" data-item-cost="80" data-item-id="bruschetta">
+                    </div>
+                </div>
+
+                <div class="menu-details">
+                    <p class="menu-category-title">🍛 Main Course</p>
+                </div>
+                <div class="menu-item">
+                    <img src="images/indian-meal-punjabi-paneer-butter-masala-roti-indian-main-course-lunch-dinner-paneer-butter-masala-curry-roti-indian-109156151.jpg" alt="Paneer Butter Masala">
+                    <div class="menu-item-info">
+                        <p class="menu-item-title" data-item-id="paneer-butter-masala">Paneer Butter Masala with Roti <br><span class="item-cost">(₹150 per plate)</span></p>
+                        <p class="menu-item-description">Soft paneer cubes cooked in a rich, creamy tomato-based gravy.</p>
+                        <div class="quantity-selector" style="display:none;">
+                            <label for="paneer-butter-masala-qty">Plates:</label>
+                            <input type="number" id="paneer-butter-masala-qty" class="item-quantity" data-item-id="paneer-butter-masala" value="0" min="0">
+                        </div>
+                    </div>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="item-checkbox" data-item-name="Paneer Butter Masala with Roti" data-item-type="menu" data-item-cost="150" data-item-id="paneer-butter-masala">
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <img src="images/Easy-Butter-Chicken-Square-Image-735x735.jpg" alt="Butter Chicken">
+                    <div class="menu-item-info">
+                        <p class="menu-item-title" data-item-id="butter-chicken">Butter Chicken with Rice <br><span class="item-cost">(₹180 per plate)</span></p>
+                        <p class="menu-item-description">Tender chicken cooked in a creamy butter-based tomato curry.</p>
+                        <div class="quantity-selector" style="display:none;">
+                            <label for="butter-chicken-qty">Plates:</label>
+                            <input type="number" id="butter-chicken-qty" class="item-quantity" data-item-id="butter-chicken" value="0" min="0">
+                        </div>
+                    </div>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="item-checkbox" data-item-name="Butter Chicken with Rice" data-item-type="menu" data-item-cost="180" data-item-id="butter-chicken">
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <img src="images/fettuccine-alfredo-pasta-dish-garnished-with-fresh-basil-and-grated-cheese-photo.jpg" alt="Pasta Alfredo">
+                    <div class="menu-item-info">
+                        <p class="menu-item-title" data-item-id="pasta-alfredo">Pasta Alfredo <br><span class="item-cost">(₹130 per plate)</span></p>
+                        <p class="menu-item-description">Italian pasta tossed in a rich and creamy white sauce with parmesan.</p>
+                        <div class="quantity-selector" style="display:none;">
+                            <label for="pasta-alfredo-qty">Plates:</label>
+                            <input type="number" id="pasta-alfredo-qty" class="item-quantity" data-item-id="pasta-alfredo" value="0" min="0">
+                        </div>
+                    </div>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="item-checkbox" data-item-name="Pasta Alfredo" data-item-type="menu" data-item-cost="130" data-item-id="pasta-alfredo">
+                    </div>
+                </div>
+
+                <div class="menu-details">
+                    <p class="menu-category-title">🍚 Side Dishes</p>
+                </div>
+                <div class="menu-item">
+                    <img src="images/cumin-rice-jeera-popular-indian-260nw-1785410987.jpg" alt="Jeera Rice">
+                    <div class="menu-item-info">
+                        <p class="menu-item-title" data-item-id="jeera-rice">Jeera Rice <br><span class="item-cost">(₹60 per plate)</span></p>
+                        <p class="menu-item-description">Fragrant basmati rice flavored with cumin seeds.</p>
+                        <div class="quantity-selector" style="display:none;">
+                            <label for="jeera-rice-qty">Plates:</label>
+                            <input type="number" id="jeera-rice-qty" class="item-quantity" data-item-id="jeera-rice" value="0" min="0">
+                        </div>
+                    </div>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="item-checkbox" data-item-name="Jeera Rice" data-item-type="menu" data-item-cost="60" data-item-id="jeera-rice">
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <img src="images/vegan-naan-square-1.jpg" alt="Garlic Naan">
+                    <div class="menu-item-info">
+                        <p class="menu-item-title" data-item-id="garlic-naan">Garlic Naan <br><span class="item-cost">(₹40 per plate)</span></p>
+                        <p class="menu-item-description">Soft and fluffy naan bread with a garlic butter topping.</p>
+                        <div class="quantity-selector" style="display:none;">
+                            <label for="garlic-naan-qty">Plates:</label>
+                            <input type="number" id="garlic-naan-qty" class="item-quantity" data-item-id="garlic-naan" value="0" min="0">
+                        </div>
+                    </div>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="item-checkbox" data-item-name="Garlic Naan" data-item-type="menu" data-item-cost="40" data-item-id="garlic-naan">
+                    </div>
+                </div>
+
+                <div class="menu-details">
+                    <p class="menu-category-title">🍰 Desserts</p>
+                </div>
+                <div class="menu-item">
+                    <img src="images/delicious-brownies-with-melted-chocolate-on-a-stack.jpg" alt="Chocolate Brownie">
+                    <div class="menu-item-info">
+                        <p class="menu-item-title" data-item-id="chocolate-brownie">Chocolate Brownie <br><span class="item-cost">(₹90 per plate)</span></p>
+                        <p class="menu-item-description">Rich and fudgy chocolate brownies served with vanilla ice cream.</p>
+                        <div class="quantity-selector" style="display:none;">
+                            <label for="chocolate-brownie-qty">Plates:</label>
+                            <input type="number" id="chocolate-brownie-qty" class="item-quantity" data-item-id="chocolate-brownie" value="0" min="0">
+                        </div>
+                    </div>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="item-checkbox" data-item-name="Chocolate Brownie" data-item-type="menu" data-item-cost="90" data-item-id="chocolate-brownie">
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <img src="images/rasmalai_can_recipe.jpg" alt="Rasmalai">
+                    <div class="menu-item-info">
+                        <p class="menu-item-title" data-item-id="rasmalai">Rasmalai <br><span class="item-cost">(₹110 per plate)</span></p>
+                        <p class="menu-item-description">Soft cheese dumplings soaked in saffron-infused milk.</p>
+                        <div class="quantity-selector" style="display:none;">
+                            <label for="rasmalai-qty">Plates:</label>
+                            <input type="number" id="rasmalai-qty" class="item-quantity" data-item-id="rasmalai" value="0" min="0">
+                        </div>
+                    </div>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="item-checkbox" data-item-name="Rasmalai" data-item-type="menu" data-item-cost="110" data-item-id="rasmalai">
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <img src="images/White-Chocolate-Cheesecake_730px-featured.jpg" alt="Cheesecake">
+                    <div class="menu-item-info">
+                        <p class="menu-item-title" data-item-id="cheesecake">Cheesecake <br><span class="item-cost">(₹100 per plate)</span></p>
+                        <p class="menu-item-description">Creamy and rich cheesecake with a buttery crust.</p>
+                        <div class="quantity-selector" style="display:none;">
+                            <label for="cheesecake-qty">Plates:</label>
+                            <input type="number" id="cheesecake-qty" class="item-quantity" data-item-id="cheesecake" value="0" min="0">
+                        </div>
+                    </div>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="item-checkbox" data-item-name="Cheesecake" data-item-type="menu" data-item-cost="100" data-item-id="cheesecake">
+                    </div>
+                </div>
+
+                <div class="menu-details">
+                    <p class="menu-category-title">☕ BEVERAGES</p>
+                </div>
+                <div class="menu-item">
+                    <img src="images/virgin-mojito-recipe@palate-desire-2.jpg" alt="Mojito">
+                    <div class="menu-item-info">
+                        <p class="menu-item-title" data-item-id="mojito">Mojito <br><span class="item-cost">(₹70 per plate)</span></p>
+                        <p class="menu-item-description">Refreshing mint and lime drink with a fizzy twist.</p>
+                        <div class="quantity-selector" style="display:none;">
+                            <label for="mojito-qty">Plates:</label>
+                            <input type="number" id="mojito-qty" class="item-quantity" data-item-id="mojito" value="0" min="0">
+                        </div>
+                    </div>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="item-checkbox" data-item-name="Mojito" data-item-type="menu" data-item-cost="70" data-item-id="mojito">
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <img src="images/masala-indian-drink-in-the-festival-of-holi-tea-with-milk-and-spices-in-a-glass-mug-photo.jpg" alt="Masala Chai">
+                    <div class="menu-item-info">
+                        <p class="menu-item-title" data-item-id="masala-chai">Masala Chai <br><span class="item-cost">(₹30 per plate)</span></p>
+                        <p class="menu-item-description">Traditional Indian tea brewed with aromatic spices.</p>
+                        <div class="quantity-selector" style="display:none;">
+                            <label for="masala-chai-qty">Plates:</label>
+                            <input type="number" id="masala-chai-qty" class="item-quantity" data-item-id="masala-chai" value="0" min="0">
+                        </div>
+                    </div>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="item-checkbox" data-item-name="Masala Chai" data-item-type="menu" data-item-cost="30" data-item-id="masala-chai">
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <img src="images/23_10_2021_17_57_114_pm.webp" alt="Cold Coffee">
+                    <div class="menu-item-info">
+                        <p class="menu-item-title" data-item-id="cold-coffee">Cold Coffee <br><span class="item-cost">(₹80 per plate)</span></p>
+                        <p class="menu-item-description">Chilled coffee blended with milk and a touch of chocolate.</p>
+                        <div class="quantity-selector" style="display:none;">
+                            <label for="cold-coffee-qty">Plates:</label>
+                            <input type="number" id="cold-coffee-qty" class="item-quantity" data-item-id="cold-coffee" value="0" min="0">
+                        </div>
+                    </div>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="item-checkbox" data-item-name="Cold Coffee" data-item-type="menu" data-item-cost="80" data-item-id="cold-coffee">
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="section-title">Event Decorations</h2>
+            <div class="decor-grid">
+                <div class="decor-item">
+                    <img src="images/blog.jpg" alt="Floral Arrangements">
+                    <p>Floral Arrangements</p>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="decor-checkbox" data-item-name="Floral Arrangements" data-item-type="decor" data-item-cost="300">
+                    </div>
+                </div>
+                <div class="decor-item">
+                    <img src="images/Classic-Indian-Themed-Wedding-Stage-Decor.jpg" alt="Chandeliers & Hanging Lights">
+                    <p>Chandeliers & Hanging Lights</p>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="decor-checkbox" data-item-name="Chandeliers & Hanging Lights" data-item-type="decor" data-item-cost="500">
+                    </div>
+                </div>
+                <div class="decor-item">
+                    <img src="images/71rk-mKzKgL._AC_UF894,1000_QL80_.jpg" alt="Drapes & Fabric Decorations">
+                    <p>Drapes & Fabric Decorations</p>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="decor-checkbox" data-item-name="Drapes & Fabric Decorations" data-item-type="decor" data-item-cost="400">
+                    </div>
+                </div>
+                <div class="decor-item">
+                    <img src="images/table-runners-linen-decor.jpg" alt="Table Runners & Linen Decor">
+                    <p>Table Runners & Linen Decor</p>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="decor-checkbox" data-item-name="Table Runners & Linen Decor" data-item-type="decor" data-item-cost="250">
+                    </div>
+                </div>
+                <div class="decor-item">
+                    <img src="images/crystal-glass-centerpieces.jpg" alt="Crystal & Glass Centerpieces">
+                    <p>Crystal & Glass Centerpieces</p>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="decor-checkbox" data-item-name="Crystal & Glass Centerpieces" data-item-type="decor" data-item-cost="600">
+                    </div>
+                </div>
+                <div class="decor-item">
+                    <img src="images/led-light-decor.jpg" alt="LED Light Decor">
+                    <p>LED Light Decor</p>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="decor-checkbox" data-item-name="LED Light Decor" data-item-type="decor" data-item-cost="450">
+                    </div>
+                </div>
+                <div class="decor-item">
+                    <img src="images/projection-mapping.jpg" alt="Projection Mapping">
+                    <p>Projection Mapping</p>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="decor-checkbox" data-item-name="Projection Mapping" data-item-type="decor" data-item-cost="700">
+                    </div>
+                </div>
+                <div class="decor-item">
+                    <img src="images/metallic-mirror-decor.jpg" alt="Metallic & Mirror Decor">
+                    <p>Metallic & Mirror Decor</p>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="decor-checkbox" data-item-name="Metallic & Mirror Decor" data-item-type="decor" data-item-cost="350">
+                    </div>
+                </div>
+                <div class="decor-item">
+                    <img src="images/geometric-design-elements.jpg" alt="Geometric Design Elements">
+                    <p>Geometric Design Elements</p>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="decor-checkbox" data-item-name="Geometric Design Elements" data-item-type="decor" data-item-cost="280">
+                    </div>
+                </div>
+                <div class="decor-item">
+                    <img src="images/minimalist-theme.jpg" alt="Minimalist Theme">
+                    <p>Minimalist Theme</p>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="decor-checkbox" data-item-name="Minimalist Theme" data-item-type="decor" data-item-cost="220">
+                    </div>
+                </div>
+                <div class="decor-item">
+                    <img src="images/mandala-rangoli-designs.jpg" alt="Mandala & Rangoli Designs">
+                    <p>Mandala & Rangoli Designs</p>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="decor-checkbox" data-item-name="Mandala & Rangoli Designs" data-item-type="decor" data-item-cost="320">
+                    </div>
+                </div>
+                <div class="decor-item">
+                    <img src="images/themed-backdrops.jpg" alt="Themed Backdrops">
+                    <p>Themed Backdrops</p>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="decor-checkbox" data-item-name="Themed Backdrops" data-item-type="decor" data-item-cost="480">
+                    </div>
+                </div>
+                <div class="decor-item">
+                    <img src="images/wooden-carving-elephant-task-mandap.jpg" alt="Wooden Carvings & Art Pieces">
+                    <p>Wooden Carvings & Art Pieces</p>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="decor-checkbox" data-item-name="Wooden Carvings & Art Pieces" data-item-type="decor" data-item-cost="550">
+                    </div>
+                </div>
+                <div class="decor-item">
+                    <img src="images/lanterns-candle-holders.jpg" alt="Lanterns & Candle Holders">
+                    <p>Lanterns & Candle Holders</p>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="decor-checkbox" data-item-name="Lanterns & Candle Holders" data-item-type="decor" data-item-cost="290">
+                    </div>
+                </div>
+                <div class="decor-item">
+                    <img src="images/hanging-floral-garlands.jpg" alt="Hanging Floral Garlands">
+                    <p>Hanging Floral Garlands</p>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="decor-checkbox" data-item-name="Hanging Floral Garlands" data-item-type="decor" data-item-cost="380">
+                    </div>
+                </div>
+                <div class="decor-item">
+                    <img src="images/balloon-arch-arrangements.jpeg" alt="Balloon Arch & Arrangements">
+                    <p>Balloon Arch & Arrangements</p>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="decor-checkbox" data-item-name="Balloon Arch & Arrangements" data-item-type="decor" data-item-cost="420">
+                    </div>
+                </div>
+                <div class="decor-item">
+                    <img src="images/sky-lanterns-hanging-decor.jpg" alt="Sky Lanterns & Hanging Decor">
+                    <p>Sky Lanterns & Hanging Decor</p>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="decor-checkbox" data-item-name="Sky Lanterns & Hanging Decor" data-item-type="decor" data-item-cost="310">
+                    </div>
+                </div>
+                <div class="decor-item">
+                    <img src="images/garden-greenery-decor.jpg" alt="Garden & Greenery Decor">
+                    <p>Garden & Greenery Decor</p>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="decor-checkbox" data-item-name="Garden & Greenery Decor" data-item-type="decor" data-item-cost="520">
+                    </div>
+                </div>
+            </div>
+            <button id="select-decor-items-btn" class="btn" style="margin-top: 30px; display: none;">Select Chosen Items</button>
+        </div>
+
+        <div id="menu-item-detail-page" class="menu-detail-page" style="display: none;">
+            <button id="back-to-menu-btn" class="btn back-btn">← Back to Menu</button>
+            <h3 id="detail-item-title" class="detail-title"></h3>
+            <img id="detail-item-image" class="detail-image" src="" alt="Menu Item Image">
+            <p id="detail-item-description" class="detail-description"></p>
+            <div id="additional-details" class="detail-additional"></div>
+        </div>
+    </section>
+
+    <section id="schedule" class="page">
+        <h2 class="section-title">Event Schedule</h2>
+        <div class="schedule-container">
+            <div class="schedule-day">
+                <h3>Sunday – Grand Opening Ceremony</h3>
+                <p><strong>⏰ Time:</strong> 6:00 PM – 9:00 PM</p>
+                <p><strong>📍 Venue:</strong> Main Hall</p>
+                <ul>
+                    <li>Guest Arrival & Registration</li>
+                    <li>Welcome Speech & Introduction</li>
+                <li>Cultural Performances & Live Music</li>
+                    <li>Networking & Dinner</li>
+                </ul>
+            </div>
+            <div class="schedule-day">
+                <h3>Monday – Workshops & Skill Development</h3>
+                <p><strong>⏰ Time:</strong> 10:00 AM – 5:00 PM</p>
+                <p><strong>📍 Venue:</strong> Conference Hall A & B</p>
+                <ul>
+                    <li>Digital Marketing Workshop</li>
+                    <li>Business Strategy & Leadership Session</li>
+                    <li>Personal Branding & Social Media Growth</li>
+                </ul>
+            </div>
+            <div class="schedule-day">
+                <h3>Tuesday – Innovation & Technology</h3>
+                <p><strong>⏰ Time:</strong> 9:00 AM – 6:00 PM</p>
+                <p><strong>📍 Venue:</strong> Tech Hall</p>
+                <ul>
+                    <li>9:00 AM - 11:00 AM – AI & Future Technologies Seminar</li>
+                    <li>11:00 AM - 1:00 PM – Coding & App Development Workshop</li>
+                    <li>1:00 PM - 2:00 PM – Lunch Break</li>
+                    <li>2:00 PM - 4:00 PM – Startup Pitches & Investor Meet</li>
+                    <li>4:00 PM - 6:00 PM – Q&A & Networking</li>
+                </ul>
+            </div>
+            <div class="schedule-day">
+                <h3>Wednesday – Cultural & Entertainment Night</h3>
+                <p><strong>⏰ Time:</strong> 5:00 PM – 10:00 PM</p>
+                <p><strong>📍 Venue:</strong> Open-Air Stage</p>
+                <ul>
+                    <li>5:00 PM - 6:00 PM – Art & Handicraft Exhibition</li>
+                    <li>6:00 PM - 7:30 PM – Traditional Dance & Music Show</li>
+                    <li>7:30 PM - 8:30 PM – Fashion Show & Costume Parade</li>
+                    <li>8:30 PM - 10:00 PM – Stand-Up Comedy & Special Performances</li>
+                </ul>
+            </div>
+            <div class="schedule-day">
+                <h3>Thursday – Sports & Fitness Activities</h3>
+                <p><strong>⏰ Time:</strong> 7:00 AM – 5:00 PM</p>
+                <p><strong>📍 Venue:</strong> Sports Arena</p>
+                <ul>
+                    <li>7:00 AM - 8:30 AM – Yoga & Meditation Session</li>
+                    <li>9:00 AM - 12:00 PM – Football & Basketball Matches</li>
+                    <li>12:00 PM - 1:00 PM – Lunch Break</li>
+                    <li>1:00 PM - 3:00 PM – Badminton & Table Tennis Competitions</li>
+                    <li>3:00 PM - 5:00 PM – Prize Distribution Ceremony</li>
+                </ul>
+            </div>
+            <div class="schedule-day">
+                <h3>Friday – Business Networking & Career Growth</h3>
+                <p><strong>⏰ Time:</strong> 10:00 AM – 6:00 PM</p>
+                <p><strong>📍 Venue:</strong> Corporate Lounge</p>
+                <ul>
+                    <li>10:00 AM - 12:00 PM – Industry Leaders’ Panel Discussion</li>
+                    <li>12:00 PM - 1:00 PM – Lunch Break</li>
+                    <li>1:00 PM - 3:00 PM – Resume & Career Coaching</li>
+                    <li>3:00 PM - 6:00 PM – Speed Networking & Job Fair</li>
+                </ul>
+            </div>
+            <div class="schedule-day">
+                <h3>Saturday – Gala Night & Closing Ceremony</h3>
+                <p><strong>⏰ Time:</strong> 6:00 PM – 11:00 PM</p>
+                <p><strong>📍 Venue:</strong> Banquet Hall</p>
+                <ul>
+                    <li>6:00 PM - 7:00 PM – Award Distribution & Felicitations</li>
+                    <li>7:00 PM - 9:00 PM – Live Band & DJ Night</li>
+                    <li>9:00 PM - 11:00 PM – Grand Dinner & Fireworks</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="venue" class="page">
+        <div class="venue-item">
+            <h2 class="section-title">Event Venue</h2><br>
+            <p>Join us at the beautiful <strong>Celebration Hall</strong> in the heart of the city.</p><br>
+            <p>Address: Cambridge Institute of Technology - CIT, Jai Bhuvaneshwari Layout Rd, SR Layout, Chikkabasavanapura, Krishnarajapuram, Bengaluru, Karnataka 560036</p><br>
+            <img src="/storage/emulated/0/Pictures/QR & Barcode Scanner/1743687078688.jpg" alt="QR Code for location" class="qr-img">
+            <p>Scan for location</p><br>
+            <a href="https://maps.app.goo.gl/YourActualGoogleMapsLinkHere" target="_blank" rel="noopener noreferrer">Click here for location to Cambridge Institute of Technology</a>
+        </div>
+    </section>
+
+    <section id="rsvp" class="page">
+        <h2 class="section-title">RSVP</h2>
+        <form class="rsvp-form-container" id="rsvp-form">
+            <label for="name">Your Name</label>
+            <input type="text" id="name" name="name" class="form-input" placeholder="Enter your name" required>
+            <div id="name-error" class="error-message"></div>
+
+            <label for="email">Your Email</label>
+            <input type="email" id="email" name="email" class="form-input" placeholder="Enter your email" required>
+            <div id="email-error" class="error-message"></div>
+
+            <label for="guests">Number of Guests</label>
+            <input type="number" id="guests" name="guests" class="form-input" placeholder="Enter number of guests" required min="1">
+            <div id="guests-error" class="error-message"></div>
+
+            <button type="button" id="go-to-decor-for-selection-btn" class="btn">Select Dishes & Decor</button>
+
+            <label for="dishes-decor-summary" style="margin-top: 20px;">Selected Dishes & Decoration Designs</label>
+            <textarea id="dishes-decor-summary" name="selected_items_summary" class="text-box" placeholder="Your selected items will appear here." readonly></textarea>
+            <div id="items-error" class="error-message"></div>
+
+            <p id="total-cost-display"></p>
+            <p id="advance-payment-display"></p>
+            <p class="booking-note">Online booking is only to make the process of conversation between the customer faster, but you have to visit the place and talk about the Event with us.</p>
+
+            <button type="submit" class="btn">Submit RSVP</button>
+        </form>
+    </section>
+
+    <section id="contact" class="page">
+        <div>
+            <h2 class="section-title">Contact Us</h2>
+            <p>Email: <a href="mailto:info@cambridge.edu.in">info@cambridge.edu.in</a></p>
+            <p>Phone: <a href="tel:+917892977787">+91 78929 77787</a></p>
+        </div>
+    </section>
+
+    <div id="imageModal" class="image-modal" style="display: none;">
+        <span class="close-button" role="button" aria-label="Close image modal">×</span>
+        <img class="modal-content" id="modalImage" alt="Enlarged image">
+        <div id="caption" class="caption-text"></div>
+    </div>
+
+    <button id="back-to-top-btn" class="back-to-top" title="Go to top">↑ Top</button>
+
+    <script src="web.js"></script>
+</body>
+</html>
