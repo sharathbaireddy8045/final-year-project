@@ -9,8 +9,8 @@
         html, body { max-width: 100%; overflow-x: hidden; }
         img, video { max-width: 100%; height: auto; }
         .page { box-sizing: border-box; }
-        #themeLogoBtn { position: fixed; top: 10px; left: 20px; z-index: 1001; background: transparent; border: none; cursor: pointer; padding: 0; }
-        #themeLogoBtn img { width: 60px; height: auto; filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5)); }
+        #themeLogoBtn { background: transparent; border: none; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; }
+        #themeLogoBtn img { width: 40px; height: 40px; display: block; filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.45)); }
         .theme-modal { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); z-index: 10000; align-items: center; justify-content: center; }
         .theme-modal.open { display: flex; }
         .theme-panel { background: #141414; padding: 30px; border-radius: 15px; border: 2px solid #FFD700; max-width: 400px; width: 90%; }
@@ -25,9 +25,6 @@
     </style>
 </head>
 <body>
-    <button id="themeLogoBtn" type="button" title="Change theme or colours">
-        <img src="logo.svg" alt="Bliss Bloom Events">
-    </button>
     <!-- Scoped Radio Buttons for Navigation Engine Only -->
     <input type="radio" id="home-tab" name="tabs" class="nav-tab-engine" checked>
     <input type="radio" id="about-tab" name="tabs" class="nav-tab-engine">
@@ -38,6 +35,9 @@
     <input type="radio" id="contact-tab" name="tabs" class="nav-tab-engine">
 
     <nav class="navbar">
+        <button id="themeLogoBtn" type="button" title="Change theme or colours">
+            <img src="logo.svg" alt="Bliss Bloom Events">
+        </button>
         <label for="home-tab">Home</label>
         <label for="about-tab">About</label>
         <label for="decor-tab">Dishes & Decor</label>
@@ -602,6 +602,15 @@
             document.querySelectorAll('.btn, .back-to-top, .theme-panel h3, .theme-close').forEach(function (el) {
                 el.style.background = t.accent;
             });
+            var checked = document.querySelector('.nav-tab-engine:checked');
+            if (checked) {
+                var active = document.querySelector('.navbar label[for="' + checked.id + '"]');
+                if (active) {
+                    active.style.background = t.accent;
+                    active.style.borderColor = t.accent;
+                    active.style.color = '#1a1a1a';
+                }
+            }
             localStorage.setItem('blissTheme', name);
         }
 
