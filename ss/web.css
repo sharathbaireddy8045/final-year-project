@@ -5,7 +5,7 @@
     box-sizing: border-box;
 }
 
-html, body {\n    -webkit-text-size-adjust: 100%;\n    -ms-text-size-adjust: 100%;
+html {\n    font-size: 16px;\n}\nhtml, body {\n    -webkit-text-size-adjust: 100%;\n    -ms-text-size-adjust: 100%;
     width: 100%;
     min-height: 100vh;
     margin: 0;
