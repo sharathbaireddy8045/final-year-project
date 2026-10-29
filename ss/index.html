@@ -58,9 +58,6 @@
         </div>
     </div>
     <script>
-        if(localStorage.getItem('blissUser')) {
-            window.location.href = 'web.html';
-        }
         function showAuth(type) {
             document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active'));
             document.querySelectorAll('.auth-form').forEach(f=>f.classList.remove('active'));
