@@ -5,14 +5,14 @@
     box-sizing: border-box;
 }
 
-html, body {
+html, body {\n    -webkit-text-size-adjust: 100%;\n    -ms-text-size-adjust: 100%;
     width: 100%;
     min-height: 100vh;
     margin: 0;
     padding: 0;
 }
 
-body {
+body {\n    -webkit-text-size-adjust: 100%;\n    -ms-text-size-adjust: 100%;
     /* Fixed background container to ensure image never moves and no white space shows */
     background: url('images/wp15400585.jpg') no-repeat center center fixed;
     background-size: cover;
@@ -25,7 +25,7 @@ body {
 
 /* Light Mode Support - Keeping background behaviors identical */
 @media (prefers-color-scheme: light) {
-    body {
+    body {\n    -webkit-text-size-adjust: 100%;\n    -ms-text-size-adjust: 100%;
         background: url('images/wp15400585.jpg') no-repeat center center fixed;
         background-size: cover;
         color: #111111;
@@ -470,8 +470,8 @@ form.rsvp-form-container label {
 }
 
 /* ========== Mobile Breakpoints (< 768px) ========== */
-@media (max-width: 768px) {
-    body {
+@media (max-width: 1024px) {\n    .page {\n        width: 92%;\n        padding: 30px 15px;\n    }\n    .navbar {\n        padding: 12px 8px;\n        gap: 10px;\n    }\n}\n\n@media (max-width: 768px) {
+    body {\n    -webkit-text-size-adjust: 100%;\n    -ms-text-size-adjust: 100%;
         padding-top: 140px; /* Gives more clearance since links wrap onto multiple lines */
     }
     .navbar {
