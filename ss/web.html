@@ -3,10 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <title>Event Invitation</title>
+    <title>Bliss Bloom Events</title>
     <link rel="stylesheet" href="web.css">
-    <script>\n        document.addEventListener("DOMContentLoaded", function(){\n            const logo = document.getElementById("themeLogo");\n            if(logo){ logo.addEventListener("click", function(e){ e.stopPropagation(); document.getElementById("themeModal").style.display="flex"; }); }\n        });\n        function changeTheme(theme){\n            const body = document.body;\n            if(theme==="maroon"){\n                body.style.background="radial-gradient(ellipse at center, #4a0000 0%, #000000 65%), linear-gradient(135deg, #000000 0%, #2d0000 50%, #000000 100%)";\n                document.querySelectorAll(".navbar, .page, form.rsvp-form-container, .menu-container").forEach(el=>{ el.style.background="rgba(40,0,0,0.9)"; el.style.boxShadow="0 0 15px rgba(139,0,0,0.5)"; });\n                document.querySelectorAll(".navbar label, .section-title, .menu-category-title, .menu-item-title, .decor-item p").forEach(el=>{ if(el.style.color && el.style.color.includes("255,215")) el.style.color="#ff6b6b"; });\n            }else if(theme==="royal"){\n                body.style.background="radial-gradient(ellipse at center, #000033 0%, #000000 65%), linear-gradient(135deg, #000000 0%, #000066 50%, #000000 100%)";\n                document.querySelectorAll(".navbar, .page, form.rsvp-form-container, .menu-container").forEach(el=>{ el.style.background="rgba(0,0,40,0.9)"; el.style.boxShadow="0 0 15px rgba(65,105,225,0.5)"; });\n            }else if(theme==="emerald"){\n                body.style.background="radial-gradient(ellipse at center, #003300 0%, #000000 65%), linear-gradient(135deg, #000000 0%, #004d00 50%, #000000 100%)";\n                document.querySelectorAll(".navbar, .page, form.rsvp-form-container, .menu-container").forEach(el=>{ el.style.background="rgba(0,40,0,0.9)"; el.style.boxShadow="0 0 15px rgba(80,200,120,0.5)"; });\n            }else{\n                body.style.background="radial-gradient(ellipse at center, #1a1500 0%, #000000 65%), linear-gradient(135deg, #000000 0%, #0d0a00 50%, #000000 100%)";\n                document.querySelectorAll(".navbar, .page, form.rsvp-form-container, .menu-container").forEach(el=>{ el.style.background="rgba(20,20,20,0.95)"; el.style.boxShadow="0 0 15px rgba(255,215,0,0.4)"; });\n            }\n            document.getElementById("themeModal").style.display="none";\n        }\n    </script>\n    <style>\n        html, body { max-width: 100%; overflow-x: hidden; }\n        img, video { max-width: 100%; height: auto; }\n        .page { box-sizing: border-box; }\n    </style>\n</head>
-<body>\n    <div style="position:fixed; top:10px; left:20px; z-index:1001;"><img src="logo.svg" alt="Logo" id="themeLogo" style="width:60px; height:auto; cursor:pointer; filter: drop-shadow(0 0 10px rgba(255,215,0,0.5));" title="Change Theme"></div>
+    <style>
+        html, body { max-width: 100%; overflow-x: hidden; }
+        img, video { max-width: 100%; height: auto; }
+        .page { box-sizing: border-box; }
+        #themeLogoBtn { position: fixed; top: 10px; left: 20px; z-index: 1001; background: transparent; border: none; cursor: pointer; padding: 0; }
+        #themeLogoBtn img { width: 60px; height: auto; filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5)); }
+        .theme-modal { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); z-index: 10000; align-items: center; justify-content: center; }
+        .theme-modal.open { display: flex; }
+        .theme-panel { background: #141414; padding: 30px; border-radius: 15px; border: 2px solid #FFD700; max-width: 400px; width: 90%; }
+        .theme-panel h3 { color: #FFD700; text-align: center; margin-bottom: 20px; font-family: Georgia, serif; }
+        .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .theme-swatch { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px; }
+        .theme-swatch[data-theme="gold"] { background: #FFD700; color: #000; }
+        .theme-swatch[data-theme="maroon"] { background: #8B0000; color: #fff; }
+        .theme-swatch[data-theme="royal"] { background: #4169E1; color: #fff; }
+        .theme-swatch[data-theme="emerald"] { background: #50C878; color: #000; }
+        .theme-close { width: 100%; padding: 10px; background: transparent; color: #FFD700; border: 1px solid #FFD700; border-radius: 8px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <button id="themeLogoBtn" type="button" title="Change theme or colours">
+        <img src="logo.svg" alt="Bliss Bloom Events">
+    </button>
     <!-- Scoped Radio Buttons for Navigation Engine Only -->
     <input type="radio" id="home-tab" name="tabs" class="nav-tab-engine" checked>
     <input type="radio" id="about-tab" name="tabs" class="nav-tab-engine">
@@ -49,12 +70,12 @@
             <h2 class="section-title">Event Menu</h2>
             <div class="menu-container">
                 <div class="menu-details">
-                    <p class="menu-category-title">⭐ Starters & Appetizers</p>
+                    <p class="menu-category-title">â­ Starters & Appetizers</p>
                 </div>
                 <div class="menu-item">
                     <img src="images/Chinese-Spring-Rolls_1200x800.jpg" alt="Spring Rolls">
                     <div class="menu-item-info">
-                        <p class="menu-item-title" data-item-id="spring-rolls">Spring Rolls <br><span>(₹50 per plate)</span></p>
+                        <p class="menu-item-title" data-item-id="spring-rolls">Spring Rolls <br><span>(â‚¹50 per plate)</span></p>
                         <p class="menu-item-description">Crispy rolls stuffed with fresh vegetables and served with a tangy dip.</p>
                         <div class="quantity-selector" style="display:none;">
                             <label for="spring-rolls-qty">Plates:</label>
@@ -68,7 +89,7 @@
                 <div class="menu-item">
                     <img src="images/Chicken-Tikka-Kebab-Skewers-2-1600-720x720.jpg" alt="Chicken Tikka">
                     <div class="menu-item-info">
-                        <p class="menu-item-title" data-item-id="chicken-tikka">Chicken Tikka <br><span class="item-cost">(₹120 per plate)</span></p>
+                        <p class="menu-item-title" data-item-id="chicken-tikka">Chicken Tikka <br><span class="item-cost">(â‚¹120 per plate)</span></p>
                         <p class="menu-item-description">Juicy, marinated chicken grilled to perfection with Indian spices.</p>
                         <div class="quantity-selector" style="display:none;">
                             <label for="chicken-tikka-qty">Plates:</label>
@@ -82,7 +103,7 @@
                 <div class="menu-item">
                     <img src="images/23_10_2021_17_57_114_pm.webp" alt="Bruschetta">
                     <div class="menu-item-info">
-                        <p class="menu-item-title" data-item-id="bruschetta">Bruschetta <br><span class="item-cost">(₹80 per plate)</span></p>
+                        <p class="menu-item-title" data-item-id="bruschetta">Bruschetta <br><span class="item-cost">(â‚¹80 per plate)</span></p>
                         <p class="menu-item-description">Toasted bread topped with fresh tomatoes, basil, and olive oil.</p>
                         <div class="quantity-selector" style="display:none;">
                             <label for="bruschetta-qty">Plates:</label>
@@ -95,12 +116,12 @@
                 </div>
 
                 <div class="menu-details">
-                    <p class="menu-category-title">🍛 Main Course</p>
+                    <p class="menu-category-title">ðŸ› Main Course</p>
                 </div>
                 <div class="menu-item">
                     <img src="images/indian-meal-punjabi-paneer-butter-masala-roti-indian-main-course-lunch-dinner-paneer-butter-masala-curry-roti-indian-109156151.jpg" alt="Paneer Butter Masala">
                     <div class="menu-item-info">
-                        <p class="menu-item-title" data-item-id="paneer-butter-masala">Paneer Butter Masala with Roti <br><span class="item-cost">(₹150 per plate)</span></p>
+                        <p class="menu-item-title" data-item-id="paneer-butter-masala">Paneer Butter Masala with Roti <br><span class="item-cost">(â‚¹150 per plate)</span></p>
                         <p class="menu-item-description">Soft paneer cubes cooked in a rich, creamy tomato-based gravy.</p>
                         <div class="quantity-selector" style="display:none;">
                             <label for="paneer-butter-masala-qty">Plates:</label>
@@ -114,7 +135,7 @@
                 <div class="menu-item">
                     <img src="images/Easy-Butter-Chicken-Square-Image-735x735.jpg" alt="Butter Chicken">
                     <div class="menu-item-info">
-                        <p class="menu-item-title" data-item-id="butter-chicken">Butter Chicken with Rice <br><span class="item-cost">(₹180 per plate)</span></p>
+                        <p class="menu-item-title" data-item-id="butter-chicken">Butter Chicken with Rice <br><span class="item-cost">(â‚¹180 per plate)</span></p>
                         <p class="menu-item-description">Tender chicken cooked in a creamy butter-based tomato curry.</p>
                         <div class="quantity-selector" style="display:none;">
                             <label for="butter-chicken-qty">Plates:</label>
@@ -128,7 +149,7 @@
                 <div class="menu-item">
                     <img src="images/fettuccine-alfredo-pasta-dish-garnished-with-fresh-basil-and-grated-cheese-photo.jpg" alt="Pasta Alfredo">
                     <div class="menu-item-info">
-                        <p class="menu-item-title" data-item-id="pasta-alfredo">Pasta Alfredo <br><span class="item-cost">(₹130 per plate)</span></p>
+                        <p class="menu-item-title" data-item-id="pasta-alfredo">Pasta Alfredo <br><span class="item-cost">(â‚¹130 per plate)</span></p>
                         <p class="menu-item-description">Italian pasta tossed in a rich and creamy white sauce with parmesan.</p>
                         <div class="quantity-selector" style="display:none;">
                             <label for="pasta-alfredo-qty">Plates:</label>
@@ -141,12 +162,12 @@
                 </div>
 
                 <div class="menu-details">
-                    <p class="menu-category-title">🍚 Side Dishes</p>
+                    <p class="menu-category-title">ðŸš Side Dishes</p>
                 </div>
                 <div class="menu-item">
                     <img src="images/cumin-rice-jeera-popular-indian-260nw-1785410987.jpg" alt="Jeera Rice">
                     <div class="menu-item-info">
-                        <p class="menu-item-title" data-item-id="jeera-rice">Jeera Rice <br><span class="item-cost">(₹60 per plate)</span></p>
+                        <p class="menu-item-title" data-item-id="jeera-rice">Jeera Rice <br><span class="item-cost">(â‚¹60 per plate)</span></p>
                         <p class="menu-item-description">Fragrant basmati rice flavored with cumin seeds.</p>
                         <div class="quantity-selector" style="display:none;">
                             <label for="jeera-rice-qty">Plates:</label>
@@ -160,7 +181,7 @@
                 <div class="menu-item">
                     <img src="images/vegan-naan-square-1.jpg" alt="Garlic Naan">
                     <div class="menu-item-info">
-                        <p class="menu-item-title" data-item-id="garlic-naan">Garlic Naan <br><span class="item-cost">(₹40 per plate)</span></p>
+                        <p class="menu-item-title" data-item-id="garlic-naan">Garlic Naan <br><span class="item-cost">(â‚¹40 per plate)</span></p>
                         <p class="menu-item-description">Soft and fluffy naan bread with a garlic butter topping.</p>
                         <div class="quantity-selector" style="display:none;">
                             <label for="garlic-naan-qty">Plates:</label>
@@ -173,12 +194,12 @@
                 </div>
 
                 <div class="menu-details">
-                    <p class="menu-category-title">🍰 Desserts</p>
+                    <p class="menu-category-title">ðŸ° Desserts</p>
                 </div>
                 <div class="menu-item">
                     <img src="images/delicious-brownies-with-melted-chocolate-on-a-stack.jpg" alt="Chocolate Brownie">
                     <div class="menu-item-info">
-                        <p class="menu-item-title" data-item-id="chocolate-brownie">Chocolate Brownie <br><span class="item-cost">(₹90 per plate)</span></p>
+                        <p class="menu-item-title" data-item-id="chocolate-brownie">Chocolate Brownie <br><span class="item-cost">(â‚¹90 per plate)</span></p>
                         <p class="menu-item-description">Rich and fudgy chocolate brownies served with vanilla ice cream.</p>
                         <div class="quantity-selector" style="display:none;">
                             <label for="chocolate-brownie-qty">Plates:</label>
@@ -192,7 +213,7 @@
                 <div class="menu-item">
                     <img src="images/rasmalai_can_recipe.jpg" alt="Rasmalai">
                     <div class="menu-item-info">
-                        <p class="menu-item-title" data-item-id="rasmalai">Rasmalai <br><span class="item-cost">(₹110 per plate)</span></p>
+                        <p class="menu-item-title" data-item-id="rasmalai">Rasmalai <br><span class="item-cost">(â‚¹110 per plate)</span></p>
                         <p class="menu-item-description">Soft cheese dumplings soaked in saffron-infused milk.</p>
                         <div class="quantity-selector" style="display:none;">
                             <label for="rasmalai-qty">Plates:</label>
@@ -206,7 +227,7 @@
                 <div class="menu-item">
                     <img src="images/White-Chocolate-Cheesecake_730px-featured.jpg" alt="Cheesecake">
                     <div class="menu-item-info">
-                        <p class="menu-item-title" data-item-id="cheesecake">Cheesecake <br><span class="item-cost">(₹100 per plate)</span></p>
+                        <p class="menu-item-title" data-item-id="cheesecake">Cheesecake <br><span class="item-cost">(â‚¹100 per plate)</span></p>
                         <p class="menu-item-description">Creamy and rich cheesecake with a buttery crust.</p>
                         <div class="quantity-selector" style="display:none;">
                             <label for="cheesecake-qty">Plates:</label>
@@ -219,12 +240,12 @@
                 </div>
 
                 <div class="menu-details">
-                    <p class="menu-category-title">☕ BEVERAGES</p>
+                    <p class="menu-category-title">â˜• BEVERAGES</p>
                 </div>
                 <div class="menu-item">
                     <img src="images/virgin-mojito-recipe@palate-desire-2.jpg" alt="Mojito">
                     <div class="menu-item-info">
-                        <p class="menu-item-title" data-item-id="mojito">Mojito <br><span class="item-cost">(₹70 per plate)</span></p>
+                        <p class="menu-item-title" data-item-id="mojito">Mojito <br><span class="item-cost">(â‚¹70 per plate)</span></p>
                         <p class="menu-item-description">Refreshing mint and lime drink with a fizzy twist.</p>
                         <div class="quantity-selector" style="display:none;">
                             <label for="mojito-qty">Plates:</label>
@@ -238,7 +259,7 @@
                 <div class="menu-item">
                     <img src="images/masala-indian-drink-in-the-festival-of-holi-tea-with-milk-and-spices-in-a-glass-mug-photo.jpg" alt="Masala Chai">
                     <div class="menu-item-info">
-                        <p class="menu-item-title" data-item-id="masala-chai">Masala Chai <br><span class="item-cost">(₹30 per plate)</span></p>
+                        <p class="menu-item-title" data-item-id="masala-chai">Masala Chai <br><span class="item-cost">(â‚¹30 per plate)</span></p>
                         <p class="menu-item-description">Traditional Indian tea brewed with aromatic spices.</p>
                         <div class="quantity-selector" style="display:none;">
                             <label for="masala-chai-qty">Plates:</label>
@@ -252,7 +273,7 @@
                 <div class="menu-item">
                     <img src="images/23_10_2021_17_57_114_pm.webp" alt="Cold Coffee">
                     <div class="menu-item-info">
-                        <p class="menu-item-title" data-item-id="cold-coffee">Cold Coffee <br><span class="item-cost">(₹80 per plate)</span></p>
+                        <p class="menu-item-title" data-item-id="cold-coffee">Cold Coffee <br><span class="item-cost">(â‚¹80 per plate)</span></p>
                         <p class="menu-item-description">Chilled coffee blended with milk and a touch of chocolate.</p>
                         <div class="quantity-selector" style="display:none;">
                             <label for="cold-coffee-qty">Plates:</label>
@@ -398,7 +419,7 @@
         </div>
 
         <div id="menu-item-detail-page" class="menu-detail-page" style="display: none;">
-            <button id="back-to-menu-btn" class="btn back-btn">← Back to Menu</button>
+            <button id="back-to-menu-btn" class="btn back-btn">â† Back to Menu</button>
             <h3 id="detail-item-title" class="detail-title"></h3>
             <img id="detail-item-image" class="detail-image" src="" alt="Menu Item Image">
             <p id="detail-item-description" class="detail-description"></p>
@@ -410,9 +431,9 @@
         <h2 class="section-title">Event Schedule</h2>
         <div class="schedule-container">
             <div class="schedule-day">
-                <h3>Sunday – Grand Opening Ceremony</h3>
-                <p><strong>⏰ Time:</strong> 6:00 PM – 9:00 PM</p>
-                <p><strong>📍 Venue:</strong> Main Hall</p>
+                <h3>Sunday â€“ Grand Opening Ceremony</h3>
+                <p><strong>â° Time:</strong> 6:00 PM â€“ 9:00 PM</p>
+                <p><strong>ðŸ“ Venue:</strong> Main Hall</p>
                 <ul>
                     <li>Guest Arrival & Registration</li>
                     <li>Welcome Speech & Introduction</li>
@@ -421,9 +442,9 @@
                 </ul>
             </div>
             <div class="schedule-day">
-                <h3>Monday – Workshops & Skill Development</h3>
-                <p><strong>⏰ Time:</strong> 10:00 AM – 5:00 PM</p>
-                <p><strong>📍 Venue:</strong> Conference Hall A & B</p>
+                <h3>Monday â€“ Workshops & Skill Development</h3>
+                <p><strong>â° Time:</strong> 10:00 AM â€“ 5:00 PM</p>
+                <p><strong>ðŸ“ Venue:</strong> Conference Hall A & B</p>
                 <ul>
                     <li>Digital Marketing Workshop</li>
                     <li>Business Strategy & Leadership Session</li>
@@ -431,59 +452,59 @@
                 </ul>
             </div>
             <div class="schedule-day">
-                <h3>Tuesday – Innovation & Technology</h3>
-                <p><strong>⏰ Time:</strong> 9:00 AM – 6:00 PM</p>
-                <p><strong>📍 Venue:</strong> Tech Hall</p>
+                <h3>Tuesday â€“ Innovation & Technology</h3>
+                <p><strong>â° Time:</strong> 9:00 AM â€“ 6:00 PM</p>
+                <p><strong>ðŸ“ Venue:</strong> Tech Hall</p>
                 <ul>
-                    <li>9:00 AM - 11:00 AM – AI & Future Technologies Seminar</li>
-                    <li>11:00 AM - 1:00 PM – Coding & App Development Workshop</li>
-                    <li>1:00 PM - 2:00 PM – Lunch Break</li>
-                    <li>2:00 PM - 4:00 PM – Startup Pitches & Investor Meet</li>
-                    <li>4:00 PM - 6:00 PM – Q&A & Networking</li>
+                    <li>9:00 AM - 11:00 AM â€“ AI & Future Technologies Seminar</li>
+                    <li>11:00 AM - 1:00 PM â€“ Coding & App Development Workshop</li>
+                    <li>1:00 PM - 2:00 PM â€“ Lunch Break</li>
+                    <li>2:00 PM - 4:00 PM â€“ Startup Pitches & Investor Meet</li>
+                    <li>4:00 PM - 6:00 PM â€“ Q&A & Networking</li>
                 </ul>
             </div>
             <div class="schedule-day">
-                <h3>Wednesday – Cultural & Entertainment Night</h3>
-                <p><strong>⏰ Time:</strong> 5:00 PM – 10:00 PM</p>
-                <p><strong>📍 Venue:</strong> Open-Air Stage</p>
+                <h3>Wednesday â€“ Cultural & Entertainment Night</h3>
+                <p><strong>â° Time:</strong> 5:00 PM â€“ 10:00 PM</p>
+                <p><strong>ðŸ“ Venue:</strong> Open-Air Stage</p>
                 <ul>
-                    <li>5:00 PM - 6:00 PM – Art & Handicraft Exhibition</li>
-                    <li>6:00 PM - 7:30 PM – Traditional Dance & Music Show</li>
-                    <li>7:30 PM - 8:30 PM – Fashion Show & Costume Parade</li>
-                    <li>8:30 PM - 10:00 PM – Stand-Up Comedy & Special Performances</li>
+                    <li>5:00 PM - 6:00 PM â€“ Art & Handicraft Exhibition</li>
+                    <li>6:00 PM - 7:30 PM â€“ Traditional Dance & Music Show</li>
+                    <li>7:30 PM - 8:30 PM â€“ Fashion Show & Costume Parade</li>
+                    <li>8:30 PM - 10:00 PM â€“ Stand-Up Comedy & Special Performances</li>
                 </ul>
             </div>
             <div class="schedule-day">
-                <h3>Thursday – Sports & Fitness Activities</h3>
-                <p><strong>⏰ Time:</strong> 7:00 AM – 5:00 PM</p>
-                <p><strong>📍 Venue:</strong> Sports Arena</p>
+                <h3>Thursday â€“ Sports & Fitness Activities</h3>
+                <p><strong>â° Time:</strong> 7:00 AM â€“ 5:00 PM</p>
+                <p><strong>ðŸ“ Venue:</strong> Sports Arena</p>
                 <ul>
-                    <li>7:00 AM - 8:30 AM – Yoga & Meditation Session</li>
-                    <li>9:00 AM - 12:00 PM – Football & Basketball Matches</li>
-                    <li>12:00 PM - 1:00 PM – Lunch Break</li>
-                    <li>1:00 PM - 3:00 PM – Badminton & Table Tennis Competitions</li>
-                    <li>3:00 PM - 5:00 PM – Prize Distribution Ceremony</li>
+                    <li>7:00 AM - 8:30 AM â€“ Yoga & Meditation Session</li>
+                    <li>9:00 AM - 12:00 PM â€“ Football & Basketball Matches</li>
+                    <li>12:00 PM - 1:00 PM â€“ Lunch Break</li>
+                    <li>1:00 PM - 3:00 PM â€“ Badminton & Table Tennis Competitions</li>
+                    <li>3:00 PM - 5:00 PM â€“ Prize Distribution Ceremony</li>
                 </ul>
             </div>
             <div class="schedule-day">
-                <h3>Friday – Business Networking & Career Growth</h3>
-                <p><strong>⏰ Time:</strong> 10:00 AM – 6:00 PM</p>
-                <p><strong>📍 Venue:</strong> Corporate Lounge</p>
+                <h3>Friday â€“ Business Networking & Career Growth</h3>
+                <p><strong>â° Time:</strong> 10:00 AM â€“ 6:00 PM</p>
+                <p><strong>ðŸ“ Venue:</strong> Corporate Lounge</p>
                 <ul>
-                    <li>10:00 AM - 12:00 PM – Industry Leaders’ Panel Discussion</li>
-                    <li>12:00 PM - 1:00 PM – Lunch Break</li>
-                    <li>1:00 PM - 3:00 PM – Resume & Career Coaching</li>
-                    <li>3:00 PM - 6:00 PM – Speed Networking & Job Fair</li>
+                    <li>10:00 AM - 12:00 PM â€“ Industry Leadersâ€™ Panel Discussion</li>
+                    <li>12:00 PM - 1:00 PM â€“ Lunch Break</li>
+                    <li>1:00 PM - 3:00 PM â€“ Resume & Career Coaching</li>
+                    <li>3:00 PM - 6:00 PM â€“ Speed Networking & Job Fair</li>
                 </ul>
             </div>
             <div class="schedule-day">
-                <h3>Saturday – Gala Night & Closing Ceremony</h3>
-                <p><strong>⏰ Time:</strong> 6:00 PM – 11:00 PM</p>
-                <p><strong>📍 Venue:</strong> Banquet Hall</p>
+                <h3>Saturday â€“ Gala Night & Closing Ceremony</h3>
+                <p><strong>â° Time:</strong> 6:00 PM â€“ 11:00 PM</p>
+                <p><strong>ðŸ“ Venue:</strong> Banquet Hall</p>
                 <ul>
-                    <li>6:00 PM - 7:00 PM – Award Distribution & Felicitations</li>
-                    <li>7:00 PM - 9:00 PM – Live Band & DJ Night</li>
-                    <li>9:00 PM - 11:00 PM – Grand Dinner & Fireworks</li>
+                    <li>6:00 PM - 7:00 PM â€“ Award Distribution & Felicitations</li>
+                    <li>7:00 PM - 9:00 PM â€“ Live Band & DJ Night</li>
+                    <li>9:00 PM - 11:00 PM â€“ Grand Dinner & Fireworks</li>
                 </ul>
             </div>
         </div>
@@ -538,13 +559,69 @@
     </section>
 
     <div id="imageModal" class="image-modal" style="display: none;">
-        <span class="close-button" role="button" aria-label="Close image modal">×</span>
+        <span class="close-button" role="button" aria-label="Close image modal">Ã—</span>
         <img class="modal-content" id="modalImage" alt="Enlarged image">
         <div id="caption" class="caption-text"></div>
     </div>
 
-    <button id="back-to-top-btn" class="back-to-top" title="Go to top">↑ Top</button>
+    <button id="back-to-top-btn" class="back-to-top" title="Go to top">â†‘ Top</button>
 
     <script src="web.js"></script>
-    <div id="themeModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:10000; align-items:center; justify-content:center;"><div style="background:rgba(20,20,20,0.98); padding:30px; border-radius:15px; border:2px solid #FFD700; max-width:400px; width:90%;"><h3 style="color:#FFD700; text-align:center; margin-bottom:20px; font-family:Georgia, serif;">Change Theme</h3><div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px;"><button onclick="changeTheme(\"gold\")" style="padding:10px; background:#FFD700; color:#000; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">Gold</button><button onclick="changeTheme(\"maroon\")" style="padding:10px; background:#8B0000; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">Maroon</button><button onclick="changeTheme(\"royal\")" style="padding:10px; background:#4169E1; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">Royal Blue</button><button onclick="changeTheme(\"emerald\")" style="padding:10px; background:#50C878; color:#000; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">Emerald</button></div><button onclick="document.getElementById(\"themeModal\").style.display=\"none\"" style="width:100%; padding:10px; background:transparent; color:#FFD700; border:1px solid #FFD700; border-radius:8px; cursor:pointer;">Close</button></div></div>\n    <script>\n        document.getElementById("themeLogo").addEventListener("click", function(){ document.getElementById("themeModal").style.display="flex"; });\n        function changeTheme(theme){\n            if(theme==="maroon"){\n                document.body.style.background="radial-gradient(ellipse at center, #4a0000 0%, #000000 65%), linear-gradient(135deg, #000000 0%, #2d0000 50%, #000000 100%)";\n                document.querySelectorAll(".navbar, .page, form.rsvp-form-container").forEach(el=>{ el.style.background="rgba(40,0,0,0.9)"; el.style.boxShadow="0 0 15px rgba(139,0,0,0.4)"; });\n            }else if(theme==="royal"){\n                document.body.style.background="radial-gradient(ellipse at center, #000033 0%, #000000 65%), linear-gradient(135deg, #000000 0%, #000066 50%, #000000 100%)";\n                document.querySelectorAll(".navbar, .page, form.rsvp-form-container").forEach(el=>{ el.style.background="rgba(0,0,40,0.9)"; el.style.boxShadow="0 0 15px rgba(65,105,225,0.4)"; });\n            }else if(theme==="emerald"){\n                document.body.style.background="radial-gradient(ellipse at center, #003300 0%, #000000 65%), linear-gradient(135deg, #000000 0%, #004d00 50%, #000000 100%)";\n                document.querySelectorAll(".navbar, .page, form.rsvp-form-container").forEach(el=>{ el.style.background="rgba(0,40,0,0.9)"; el.style.boxShadow="0 0 15px rgba(80,200,120,0.4)"; });\n            }else{\n                document.body.style.background="radial-gradient(ellipse at center, #1a1500 0%, #000000 65%), linear-gradient(135deg, #000000 0%, #0d0a00 50%, #000000 100%)";\n                document.querySelectorAll(".navbar, .page, form.rsvp-form-container").forEach(el=>{ el.style.background="rgba(20,20,20,0.95)"; el.style.boxShadow="0 0 15px rgba(255,215,0,0.4)"; });\n            }\n            document.getElementById("themeModal").style.display="none";\n        }\n    </script>\n</body>
+
+    <div id="themeModal" class="theme-modal">
+        <div class="theme-panel">
+            <h3>Change Theme</h3>
+            <div class="theme-grid">
+                <button class="theme-swatch" data-theme="gold" type="button">Gold</button>
+                <button class="theme-swatch" data-theme="maroon" type="button">Maroon</button>
+                <button class="theme-swatch" data-theme="royal" type="button">Royal Blue</button>
+                <button class="theme-swatch" data-theme="emerald" type="button">Emerald</button>
+            </div>
+            <button class="theme-close" id="themeCloseBtn" type="button">Close</button>
+        </div>
+    </div>
+
+    <script>
+        var THEMES = {
+            gold:    { bg: '#0d0d0d', panel: '#141414', accent: '#FFD700', shadow: 'rgba(255, 215, 0, 0.4)' },
+            maroon:  { bg: '#1a0000', panel: '#280000', accent: '#ff6b6b', shadow: 'rgba(139, 0, 0, 0.5)' },
+            royal:   { bg: '#00001a', panel: '#000033', accent: '#7aa2ff', shadow: 'rgba(65, 105, 225, 0.5)' },
+            emerald: { bg: '#001a0d', panel: '#002814', accent: '#50C878', shadow: 'rgba(80, 200, 120, 0.5)' }
+        };
+
+        function applyTheme(name) {
+            var t = THEMES[name] || THEMES.gold;
+            document.body.style.backgroundColor = t.bg;
+            document.querySelectorAll('.navbar, .page, form.rsvp-form-container, .menu-container').forEach(function (el) {
+                el.style.background = t.panel;
+                el.style.boxShadow = '0 0 15px ' + t.shadow;
+            });
+            document.querySelectorAll('.navbar label, .section-title, .menu-category-title, .menu-item-title, .decor-item p, .detail-title').forEach(function (el) {
+                el.style.color = t.accent;
+            });
+            document.querySelectorAll('.btn, .back-to-top, .theme-panel h3, .theme-close').forEach(function (el) {
+                el.style.background = t.accent;
+            });
+            localStorage.setItem('blissTheme', name);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var btn = document.getElementById('themeLogoBtn');
+            var modal = document.getElementById('themeModal');
+            if (btn && modal) {
+                btn.addEventListener('click', function () { modal.classList.add('open'); });
+                document.getElementById('themeCloseBtn').addEventListener('click', function () { modal.classList.remove('open'); });
+                modal.addEventListener('click', function (e) { if (e.target === modal) { modal.classList.remove('open'); } });
+                document.querySelectorAll('.theme-swatch').forEach(function (s) {
+                    s.addEventListener('click', function () {
+                        applyTheme(s.getAttribute('data-theme'));
+                        modal.classList.remove('open');
+                    });
+                });
+            }
+            var saved = localStorage.getItem('blissTheme');
+            if (saved) { applyTheme(saved); }
+        });
+    </script>
+</body>
 </html>
