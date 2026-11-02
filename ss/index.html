@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>Bliss Bloom Events - Login</title>
     <script src="theme.js?v=3"></script>
+    <script src="firebase-config.js?v=1"></script>
+    <script type="module" src="auth.js?v=1"></script>
     <style>
         :root {
             --accent: #e8c96a;
@@ -385,6 +387,52 @@
             text-align: center;
         }
 
+        .auth-error.ok {
+            color: var(--accent);
+        }
+
+        .auth-forgot {
+            align-self: flex-end;
+            margin: 0 4px 2px;
+            padding: 0;
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            font-family: inherit;
+            font-size: 12px;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .auth-forgot:hover {
+            color: var(--accent);
+        }
+
+        .auth-option:disabled,
+        .auth-submit:disabled,
+        .auth-forgot:disabled {
+            opacity: 0.65;
+            cursor: wait;
+        }
+
+        .auth-note {
+            max-width: 440px;
+            margin-top: 14px;
+            color: var(--muted);
+            font-size: 11.5px;
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        .auth-note strong {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .auth-note.demo {
+            color: #c4ae72;
+        }
+
         /* ---------- Back + footer ---------- */
         .auth-back {
             display: inline-flex;
@@ -452,7 +500,7 @@
         <div class="auth-card">
             <!-- Step 1: sign-in options -->
             <section id="view-options" class="auth-view active">
-                <button class="auth-option google" type="button" onclick="showView('google')">
+                <button class="auth-option google" type="button" onclick="googleLogin()">
                     <svg viewBox="0 0 48 48" aria-hidden="true">
                         <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.3 6.1 29.4 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/>
                         <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.3 6.1 29.4 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
@@ -484,6 +532,7 @@
                     </svg>
                     Guest Mode
                 </button>
+                <p class="auth-error" id="optionsError"></p>
             </section>
 
             <!-- Step 2: Google account chooser -->
@@ -534,6 +583,7 @@
                 <form id="loginForm" class="auth-form active" onsubmit="handleAuth(event, 'login')">
                     <input type="email" id="loginEmail" class="auth-input" placeholder="Email" autocomplete="email" required>
                     <input type="password" id="loginPassword" class="auth-input" placeholder="Password" autocomplete="current-password" required>
+                    <button class="auth-forgot" type="button" onclick="forgotPassword()">Forgot password?</button>
                     <p class="auth-error" id="authError"></p>
                     <button type="submit" class="auth-submit">Login with Email</button>
                 </form>
@@ -557,6 +607,8 @@
             <a href="#" onclick="return false;">Terms of Service</a> and
             <a href="#" onclick="return false;">Privacy Policy</a>.
         </p>
+
+        <p class="auth-note" id="authNote" hidden></p>
     </div>
 
     <script>
@@ -565,16 +617,23 @@
             email: 'sharathbaireddy8045@gmail.com'
         };
 
+        function isFirebase() {
+            return !!(window.BlissAuth && window.BlissAuth.isConfigured);
+        }
+
         function showView(name) {
             document.querySelectorAll('.auth-view').forEach(function (v) {
                 v.classList.remove('active');
             });
             var view = document.getElementById('view-' + name);
             if (view) view.classList.add('active');
-            var err = document.getElementById('authError');
-            var err2 = document.getElementById('signupError');
-            if (err) err.textContent = '';
-            if (err2) err2.textContent = '';
+            ['authError', 'signupError', 'optionsError'].forEach(function (id) {
+                var el = document.getElementById(id);
+                if (el) {
+                    el.textContent = '';
+                    el.classList.remove('ok');
+                }
+            });
         }
 
         function showAuth(type) {
@@ -582,12 +641,36 @@
             document.getElementById('tabSignup').classList.toggle('active', type === 'signup');
             document.getElementById('loginForm').classList.toggle('active', type === 'login');
             document.getElementById('signupForm').classList.toggle('active', type === 'signup');
-            var err = document.getElementById('authError');
-            var err2 = document.getElementById('signupError');
-            if (err) err.textContent = '';
-            if (err2) err2.textContent = '';
+            ['authError', 'signupError'].forEach(function (id) {
+                var el = document.getElementById(id);
+                if (el) {
+                    el.textContent = '';
+                    el.classList.remove('ok');
+                }
+            });
         }
 
+        function setOptionsError(message) {
+            var el = document.getElementById('optionsError');
+            if (!el) return;
+            el.textContent = message || '';
+            el.classList.remove('ok');
+        }
+
+        function setFormError(id, message, ok) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            el.textContent = message || '';
+            el.classList.toggle('ok', !!ok);
+        }
+
+        function lockButtons(lock) {
+            document.querySelectorAll('.auth-option, .auth-submit, .auth-forgot').forEach(function (button) {
+                button.disabled = lock;
+            });
+        }
+
+        /* ---------- Local demo mode (used until Firebase keys are added) ---------- */
         function getAccounts() {
             try {
                 var list = JSON.parse(localStorage.getItem('blissAccounts') || '[]');
@@ -601,7 +684,7 @@
             try { localStorage.setItem('blissAccounts', JSON.stringify(list)); } catch (e) {}
         }
 
-        function finishLogin(user) {
+        function finishDemoLogin(user) {
             try { localStorage.setItem('blissUser', JSON.stringify(user)); } catch (e) {}
             window.location.href = 'web.html';
         }
@@ -609,7 +692,7 @@
         function chooseGoogleAccount() {
             var accounts = getAccounts();
             var acc = accounts[0] || DEFAULT_ACCOUNT;
-            finishLogin({
+            finishDemoLogin({
                 provider: 'google',
                 type: 'social',
                 name: acc.name || DEFAULT_ACCOUNT.name,
@@ -618,20 +701,18 @@
         }
 
         function socialLogin(provider) {
-            finishLogin({
+            if (isFirebase()) {
+                setOptionsError('Apple sign-in is not enabled. Use Google or Email & Password.');
+                return;
+            }
+            finishDemoLogin({
                 provider: provider,
                 type: 'social',
                 name: provider === 'apple' ? 'Apple User' : provider + ' User'
             });
         }
 
-        function guestLogin() {
-            finishLogin({ type: 'guest', name: 'Guest User' });
-        }
-
-        function handleAuth(e, type) {
-            e.preventDefault();
-
+        function demoHandleAuth(type) {
             if (type === 'login') {
                 var email = document.getElementById('loginEmail').value.trim();
                 var password = document.getElementById('loginPassword').value;
@@ -641,11 +722,11 @@
                 })[0];
 
                 if (accounts.length && !match) {
-                    document.getElementById('authError').textContent = 'Email or password is incorrect. Please sign up first.';
+                    setFormError('authError', 'Email or password is incorrect. Please sign up first.');
                     return;
                 }
 
-                finishLogin({
+                finishDemoLogin({
                     email: email,
                     type: 'login',
                     name: match ? match.name : email.split('@')[0]
@@ -658,23 +739,134 @@
             var newPassword = document.getElementById('signupPassword').value;
 
             if (newPassword.length < 4) {
-                document.getElementById('signupError').textContent = 'Password must be at least 4 characters.';
+                setFormError('signupError', 'Password must be at least 4 characters.');
                 return;
             }
 
-            var accounts = getAccounts();
-            var exists = accounts.some(function (a) {
+            var list = getAccounts();
+            var exists = list.some(function (a) {
                 return a.email && a.email.toLowerCase() === newEmail.toLowerCase();
             });
             if (exists) {
-                document.getElementById('signupError').textContent = 'An account with this email already exists. Please log in.';
+                setFormError('signupError', 'An account with this email already exists. Please log in.');
                 return;
             }
 
-            accounts.push({ name: name, email: newEmail, password: newPassword });
-            saveAccounts(accounts);
+            list.push({ name: name, email: newEmail, password: newPassword });
+            saveAccounts(list);
 
-            finishLogin({ email: newEmail, type: 'signup', name: name });
+            finishDemoLogin({ email: newEmail, type: 'signup', name: name });
+        }
+
+        /* ---------- Real Firebase Authentication ---------- */
+        function finishFirebaseLogin(fbUser) {
+            var provider = fbUser.providerData && fbUser.providerData[0]
+                ? fbUser.providerData[0].providerId
+                : (fbUser.isAnonymous ? 'anonymous' : 'password');
+
+            var user = {
+                uid: fbUser.uid,
+                provider: provider,
+                type: fbUser.isAnonymous ? 'guest' : 'firebase',
+                name: fbUser.displayName || (fbUser.email ? fbUser.email.split('@')[0] : 'Guest User'),
+                email: fbUser.email || '',
+                photoURL: fbUser.photoURL || ''
+            };
+
+            try { localStorage.setItem('blissUser', JSON.stringify(user)); } catch (e) {}
+            window.location.href = 'web.html';
+        }
+
+        async function googleLogin() {
+            if (!isFirebase()) {
+                showView('google');
+                return;
+            }
+            setOptionsError('');
+            lockButtons(true);
+            try {
+                var user = await window.BlissAuth.google();
+                if (user) finishFirebaseLogin(user);
+            } catch (err) {
+                setOptionsError(err.message || 'Google sign-in failed.');
+            } finally {
+                lockButtons(false);
+            }
+        }
+
+        async function guestLogin() {
+            if (!isFirebase()) {
+                finishDemoLogin({ type: 'guest', name: 'Guest User' });
+                return;
+            }
+            setOptionsError('');
+            lockButtons(true);
+            try {
+                var user = await window.BlissAuth.guest();
+                if (user) finishFirebaseLogin(user);
+            } catch (err) {
+                setOptionsError(err.message || 'Guest sign-in failed.');
+            } finally {
+                lockButtons(false);
+            }
+        }
+
+        async function handleAuth(e, type) {
+            e.preventDefault();
+
+            if (!isFirebase()) {
+                demoHandleAuth(type);
+                return;
+            }
+
+            var isLogin = type === 'login';
+            var errorId = isLogin ? 'authError' : 'signupError';
+            var email = document.getElementById(isLogin ? 'loginEmail' : 'signupEmail').value.trim();
+            var password = document.getElementById(isLogin ? 'loginPassword' : 'signupPassword').value;
+            var name = isLogin ? '' : document.getElementById('signupName').value.trim();
+
+            setFormError(errorId, '');
+
+            if (!isLogin && password.length < 6) {
+                setFormError(errorId, 'Password must be at least 6 characters.');
+                return;
+            }
+
+            lockButtons(true);
+            try {
+                var user = isLogin
+                    ? await window.BlissAuth.emailLogin(email, password)
+                    : await window.BlissAuth.emailSignup(name, email, password);
+                if (user) finishFirebaseLogin(user);
+            } catch (err) {
+                setFormError(errorId, err.message || 'Sign-in failed.');
+            } finally {
+                lockButtons(false);
+            }
+        }
+
+        async function forgotPassword() {
+            var email = document.getElementById('loginEmail').value.trim();
+
+            if (!email) {
+                setFormError('authError', 'Enter your email address first.');
+                return;
+            }
+
+            if (!isFirebase()) {
+                setFormError('authError', 'Add your Firebase keys in firebase-config.js to enable password reset.');
+                return;
+            }
+
+            lockButtons(true);
+            try {
+                await window.BlissAuth.resetPassword(email);
+                setFormError('authError', 'Password reset email sent.', true);
+            } catch (err) {
+                setFormError('authError', err.message || 'Could not send the reset email.');
+            } finally {
+                lockButtons(false);
+            }
         }
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -690,6 +882,21 @@
             if (nameEl) nameEl.textContent = displayName;
             if (emailEl) emailEl.textContent = displayEmail;
             if (initialEl) initialEl.textContent = (displayName.charAt(0) || 'S').toUpperCase();
+
+            var note = document.getElementById('authNote');
+            if (!note) return;
+
+            note.hidden = false;
+
+            if (window.BlissAuth && window.BlissAuth.configError) {
+                note.classList.add('demo');
+                note.textContent = 'Firebase could not start: ' + window.BlissAuth.configError;
+            } else if (isFirebase()) {
+                note.innerHTML = 'Secure sign-in powered by <strong>Firebase</strong>';
+            } else {
+                note.classList.add('demo');
+                note.innerHTML = 'Demo mode \u2014 add your Firebase keys in <strong>firebase-config.js</strong> to enable real Google sign-in.';
+            }
         });
     </script>
 </body>

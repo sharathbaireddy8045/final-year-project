@@ -4,8 +4,10 @@
  <meta charset="UTF-8">
  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
  <title>Bliss Bloom Events</title>
- <link rel="stylesheet" href="web.css?v=6">
+ <link rel="stylesheet" href="web.css?v=7">
     <script src="theme.js?v=3"></script>
+    <script src="firebase-config.js?v=1"></script>
+    <script type="module" src="auth.js?v=1"></script>
  <style>
         html, body { max-width: 100%; overflow-x: hidden; }
         img, video { max-width: 100%; height: auto; }
@@ -13,6 +15,10 @@
     </style>
 </head>
 <body>
+ <div id="authGate" class="auth-gate" role="status" aria-live="polite">
+ <div class="auth-gate-spinner" aria-hidden="true"></div>
+ </div>
+
  <!-- Scoped Radio Buttons for Navigation Engine Only -->
  <input type="radio" id="home-tab" name="tabs" class="nav-tab-engine" checked>
  <input type="radio" id="about-tab" name="tabs" class="nav-tab-engine">
@@ -645,123 +651,198 @@
 
   <script>
  document.addEventListener('DOMContentLoaded', function () {
-     var user = null;
-     try { user = JSON.parse(localStorage.getItem('blissUser') || 'null'); } catch (e) { user = null; }
-     if (!user) { window.location.replace('index.html'); return; }
+     var gate = document.getElementById('authGate');
+     var booted = false;
+     var nullTimer = null;
 
-     var name = user.name || (user.provider ? user.provider + ' User' : 'Guest User');
-     var initial = (name.charAt(0) || 'G').toUpperCase();
-     document.getElementById('accountAvatar').textContent = initial;
-     document.getElementById('accountName').textContent = name;
-     document.getElementById('accountSub').textContent = user.email ? user.email : 'Local guest account';
-
-     var brandBtn = document.getElementById('brandBtn');
-     var settingsBtn = document.getElementById('themeBtn');
-     var themePanel = document.getElementById('themePanel');
-     var accountMenu = document.getElementById('accountMenu');
-
-     function closePanels() {
-         themePanel.hidden = true;
-         accountMenu.hidden = true;
-         brandBtn.setAttribute('aria-expanded', 'false');
-         settingsBtn.setAttribute('aria-expanded', 'false');
+     function hideGate() {
+         if (!gate) return;
+         gate.classList.add('hide');
+         setTimeout(function () {
+             if (gate && gate.parentNode) gate.parentNode.removeChild(gate);
+         }, 320);
      }
 
-     function openPanel(panel, button) {
-         var wasHidden = panel.hidden;
-         closePanels();
-         if (wasHidden) {
-             panel.hidden = false;
-             button.setAttribute('aria-expanded', 'true');
+     function showGateError(message) {
+         if (!gate) return;
+         gate.innerHTML = '<div class="auth-gate-message"><strong>Could not verify your session</strong>' +
+             message +
+             '<br><button type="button" id="authRetry">Retry</button></div>';
+         var retry = document.getElementById('authRetry');
+         if (retry) {
+             retry.addEventListener('click', function () { window.location.reload(); });
          }
      }
 
-     /* Logo button opens the theme picker */
-     brandBtn.addEventListener('click', function (e) {
-         e.stopPropagation();
-         openPanel(themePanel, brandBtn);
-     });
+     function boot(user) {
+         if (!user) {
+             window.location.replace('index.html');
+             return;
+         }
+         if (booted) return;
+         booted = true;
+         hideGate();
 
-     /* Settings gear opens the account / settings menu */
-     settingsBtn.addEventListener('click', function (e) {
-         e.stopPropagation();
-         openPanel(accountMenu, settingsBtn);
-     });
+         var name = user.name || (user.provider ? user.provider + ' User' : 'Guest User');
+         var initial = (name.charAt(0) || 'G').toUpperCase();
+         document.getElementById('accountAvatar').textContent = initial;
+         document.getElementById('accountName').textContent = name;
+         document.getElementById('accountSub').textContent = user.email
+             ? user.email
+             : ((user.isGuest || user.type === 'guest') ? 'Guest session' : 'Signed in locally');
 
-     document.addEventListener('click', function (e) {
-         if (!e.target.closest('.topbar')) { closePanels(); }
-     });
+         var brandBtn = document.getElementById('brandBtn');
+         var settingsBtn = document.getElementById('themeBtn');
+         var themePanel = document.getElementById('themePanel');
+         var accountMenu = document.getElementById('accountMenu');
 
-     document.addEventListener('keydown', function (e) {
-         if (e.key === 'Escape') { closePanels(); }
-     });
+         function closePanels() {
+             themePanel.hidden = true;
+             accountMenu.hidden = true;
+             brandBtn.setAttribute('aria-expanded', 'false');
+             settingsBtn.setAttribute('aria-expanded', 'false');
+         }
 
-     /* Theme picker */
-     var activeTheme = document.documentElement.getAttribute('data-theme') || 'gold';
-     document.querySelectorAll('.theme-option').forEach(function (opt) {
-         opt.classList.toggle('active', opt.getAttribute('data-theme') === activeTheme);
-         opt.addEventListener('click', function () {
-             var key = opt.getAttribute('data-theme');
-             applyBlissTheme(key);
-             document.querySelectorAll('.theme-option').forEach(function (o) {
-                 o.classList.remove('active');
-             });
-             opt.classList.add('active');
+         function openPanel(panel, button) {
+             var wasHidden = panel.hidden;
              closePanels();
-             toast((window.BLISS_THEMES[key] ? window.BLISS_THEMES[key].name : 'Theme') + ' applied');
-         });
-     });
-
-     /* Account menu actions */
-     document.getElementById('addAccountBtn').addEventListener('click', function () {
-         localStorage.removeItem('blissUser');
-         window.location.href = 'index.html';
-     });
-
-     document.getElementById('switchAccountBtn').addEventListener('click', function () {
-         localStorage.removeItem('blissUser');
-         window.location.href = 'index.html';
-     });
-
-     document.getElementById('manageAccountBtn').addEventListener('click', function () {
-         closePanels();
-         toast('Signed in as ' + name + (user.email ? ' (' + user.email + ')' : ''));
-     });
-
-     document.getElementById('notificationsBtn').addEventListener('click', function () {
-         closePanels();
-         toast('No new notifications');
-     });
-
-     document.getElementById('signOutBtn').addEventListener('click', function () {
-         localStorage.removeItem('blissUser');
-         window.location.href = 'index.html';
-     });
-
-     document.getElementById('privacyLink').addEventListener('click', function (e) {
-         e.preventDefault();
-         toast('Privacy Policy');
-     });
-
-     document.getElementById('termsLink').addEventListener('click', function (e) {
-         e.preventDefault();
-         toast('Terms of Service');
-     });
-
-     /* Small status toast */
-     var toastEl = null;
-     var toastTimer = null;
-
-     function toast(message) {
-         if (!toastEl) {
-             toastEl = document.createElement('div');
-             toastEl.className = 'bliss-toast';
-             document.body.appendChild(toastEl);
+             if (wasHidden) {
+                 panel.hidden = false;
+                 button.setAttribute('aria-expanded', 'true');
+             }
          }
-         toastEl.textContent = message;
-         toastEl.classList.add('show');
-         clearTimeout(toastTimer);
-         toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 2200);
+
+         /* Logo button opens the theme picker */
+         brandBtn.addEventListener('click', function (e) {
+             e.stopPropagation();
+             openPanel(themePanel, brandBtn);
+         });
+
+         /* Settings gear opens the account / settings menu */
+         settingsBtn.addEventListener('click', function (e) {
+             e.stopPropagation();
+             openPanel(accountMenu, settingsBtn);
+         });
+
+         document.addEventListener('click', function (e) {
+             if (!e.target.closest('.topbar')) { closePanels(); }
+         });
+
+         document.addEventListener('keydown', function (e) {
+             if (e.key === 'Escape') { closePanels(); }
+         });
+
+         /* Theme picker */
+         var activeTheme = document.documentElement.getAttribute('data-theme') || 'gold';
+         document.querySelectorAll('.theme-option').forEach(function (opt) {
+             opt.classList.toggle('active', opt.getAttribute('data-theme') === activeTheme);
+             opt.addEventListener('click', function () {
+                 var key = opt.getAttribute('data-theme');
+                 applyBlissTheme(key);
+                 document.querySelectorAll('.theme-option').forEach(function (o) {
+                     o.classList.remove('active');
+                 });
+                 opt.classList.add('active');
+                 closePanels();
+                 toast((window.BLISS_THEMES[key] ? window.BLISS_THEMES[key].name : 'Theme') + ' applied');
+             });
+         });
+
+         /* Shared sign-out / switch-account action */
+         function goToLogin() {
+             localStorage.removeItem('blissUser');
+             var done = function () { window.location.href = 'index.html'; };
+             if (window.BlissAuth && window.BlissAuth.isConfigured) {
+                 window.BlissAuth.logout().then(done).catch(done);
+             } else {
+                 done();
+             }
+         }
+
+         /* Account menu actions */
+         document.getElementById('addAccountBtn').addEventListener('click', goToLogin);
+         document.getElementById('switchAccountBtn').addEventListener('click', goToLogin);
+
+         document.getElementById('manageAccountBtn').addEventListener('click', function () {
+             closePanels();
+             var detail = user.email ? ' (' + user.email + ')' : '';
+             var kind = (user.isGuest || user.type === 'guest') ? ' \u2014 guest session' : '';
+             toast('Signed in as ' + name + detail + kind);
+         });
+
+         document.getElementById('notificationsBtn').addEventListener('click', function () {
+             closePanels();
+             toast('No new notifications');
+         });
+
+         document.getElementById('signOutBtn').addEventListener('click', goToLogin);
+
+         document.getElementById('privacyLink').addEventListener('click', function (e) {
+             e.preventDefault();
+             toast('Privacy Policy');
+         });
+
+         document.getElementById('termsLink').addEventListener('click', function (e) {
+             e.preventDefault();
+             toast('Terms of Service');
+         });
+
+         /* Small status toast */
+         var toastEl = null;
+         var toastTimer = null;
+
+         function toast(message) {
+             if (!toastEl) {
+                 toastEl = document.createElement('div');
+                 toastEl.className = 'bliss-toast';
+                 document.body.appendChild(toastEl);
+             }
+             toastEl.textContent = message;
+             toastEl.classList.add('show');
+             clearTimeout(toastTimer);
+             toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 2200);
+         }
+     }
+
+     if (window.BlissAuth && window.BlissAuth.isConfigured) {
+         window.BlissAuth.onChange(function (fbUser) {
+             if (!fbUser) {
+                 clearTimeout(nullTimer);
+                 if (booted) {
+                     window.location.replace('index.html');
+                     return;
+                 }
+                 nullTimer = setTimeout(function () {
+                     if (!booted) window.location.replace('index.html');
+                 }, 700);
+                 return;
+             }
+
+             clearTimeout(nullTimer);
+             if (booted) return;
+
+             boot({
+                 name: fbUser.displayName || (fbUser.email ? fbUser.email.split('@')[0] : 'Guest User'),
+                 email: fbUser.email || '',
+                 isGuest: fbUser.isAnonymous,
+                 provider: (fbUser.providerData && fbUser.providerData[0] && fbUser.providerData[0].providerId) ||
+                     (fbUser.isAnonymous ? 'anonymous' : 'password')
+             });
+         });
+
+         setTimeout(function () {
+             if (!booted) {
+                 showGateError('Firebase did not respond. Check your connection and your Firebase configuration.');
+             }
+         }, 15000);
+     } else {
+         var demoUser = null;
+         try {
+             demoUser = JSON.parse(localStorage.getItem('blissUser') || 'null');
+         } catch (e) {
+             demoUser = null;
+         }
+         boot(demoUser);
      }
  });
  </script>
