@@ -4,80 +4,667 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>Bliss Bloom Events - Login</title>
-    <link rel="stylesheet" href="web.css">
+    <script src="theme.js?v=2"></script>
     <style>
-        html, body { max-width: 100%; overflow-x: hidden; }
-        .start-screen { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; text-align:center; background-color: #0d0d0d; padding: 20px; }
-        .logo { width:150px; height:auto; margin-bottom:20px; filter: drop-shadow(0 0 20px rgba(255,215,0,0.5)); }
-        .start-title { color:#FFD700; font-size:clamp(22px, 5vw, 32px); margin-bottom:10px; letter-spacing:2px; font-family: Georgia, serif; }
-        .start-subtitle { color:#ccc; margin-bottom:30px; font-size:clamp(14px, 3vw, 18px); }
-        .auth-container { background:rgba(0,0,0,0.9); padding:clamp(25px, 5vw, 40px); border-radius:15px; box-shadow:0 0 25px rgba(255,215,0,0.4); max-width:400px; width:100%; border:1px solid rgba(255,215,0,0.3); }
-        .auth-tabs { display:flex; gap:10px; margin-bottom:25px; }
-        .auth-tab { flex:1; padding:10px; background:rgba(255,215,0,0.1); color:#FFD700; border:2px solid #FFD700; border-radius:8px; cursor:pointer; transition:0.3s; font-size:clamp(13px, 2.5vw, 15px); }
-        .auth-tab.active { background:#FFD700; color:#000; font-weight:bold; }
-        .auth-form { display:none; flex-direction:column; gap:12px; }
-        .auth-form.active { display:flex; }
-        .auth-input { padding:12px; background:rgba(30,30,30,0.8); border:2px solid #FFD700; border-radius:8px; color:#fff; font-size:clamp(14px, 2.5vw, 16px); width:100%; box-sizing:border-box; }
-        .social-btn { padding:12px; border:none; border-radius:8px; cursor:pointer; font-weight:bold; display:flex; align-items:center; justify-content:center; gap:8px; font-size:clamp(13px, 2.5vw, 15px); }
-        .google-btn { background:#fff; color:#000; }
-        .apple-btn { background:#000; color:#fff; border:1px solid #fff; }
-        .email-btn { background:#FFD700; color:#000; }
-        .guest-btn { background:rgba(255,255,255,0.1); color:#FFD700; border:2px solid #FFD700; }
-        .divider { color:#ccc; margin:8px 0; font-size:clamp(12px, 2vw, 14px); }
+        :root {
+            --accent: #ff6b35;
+            --accent-rgb: 255, 107, 53;
+            --page-bg: #0a0a0b;
+            --panel: #141416;
+            --panel-2: #1a1a1d;
+            --panel-border: #2a2a2e;
+            --text: #f2f2f2;
+            --muted: #8a8a92;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body { min-height: 100%; }
+
+        body {
+            min-height: 100vh;
+            padding: 36px 16px;
+            background-color: var(--page-bg);
+            background-image:
+                radial-gradient(circle at 50% 0%, rgba(var(--accent-rgb), 0.14), transparent 44%),
+                radial-gradient(circle at 85% 100%, rgba(var(--accent-rgb), 0.06), transparent 42%);
+            background-attachment: fixed;
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .auth-shell {
+            width: 100%;
+            min-height: calc(100vh - 72px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ---------- Brand ---------- */
+        .auth-brand {
+            margin-bottom: 26px;
+            text-align: center;
+        }
+
+        .auth-logo {
+            width: 66px;
+            height: 66px;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(var(--accent-rgb), 0.4);
+            border-radius: 50%;
+            background: rgba(var(--accent-rgb), 0.06);
+            box-shadow: 0 0 40px rgba(var(--accent-rgb), 0.22);
+        }
+
+        .auth-logo img {
+            width: 46px;
+            height: 46px;
+            display: block;
+        }
+
+        .auth-wordmark {
+            color: #ffffff;
+            font-size: clamp(1.25rem, 4.6vw, 1.75rem);
+            font-weight: 800;
+            letter-spacing: 0.14em;
+            line-height: 1.2;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .auth-wordmark span {
+            color: var(--accent);
+            text-shadow: 0 0 22px rgba(var(--accent-rgb), 0.45);
+        }
+
+        .auth-tagline {
+            margin-top: 9px;
+            color: var(--muted);
+            font-size: 13px;
+            letter-spacing: 0.03em;
+        }
+
+        /* ---------- Card ---------- */
+        .auth-card {
+            width: min(440px, 100%);
+            padding: 30px;
+            background: var(--panel);
+            border: 1px solid var(--panel-border);
+            border-radius: 28px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+        }
+
+        .auth-view {
+            display: none;
+        }
+
+        .auth-view.active {
+            display: block;
+            animation: viewIn 0.3s ease-out both;
+        }
+
+        @keyframes viewIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ---------- Sign-in options ---------- */
+        .auth-option {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 11px;
+            margin-bottom: 12px;
+            padding: 15px 18px;
+            background: var(--panel-2);
+            border: 1px solid var(--panel-border);
+            border-radius: 999px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .auth-option svg {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        .auth-option:hover {
+            transform: translateY(-1px);
+            border-color: rgba(var(--accent-rgb), 0.5);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+        }
+
+        .auth-option.google {
+            background: #ffffff;
+            border-color: #ffffff;
+            color: #111111;
+        }
+
+        .auth-option.google:hover {
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.16);
+        }
+
+        .auth-option.apple {
+            background: #1b1b1e;
+            border-color: #36363c;
+            color: #ffffff;
+        }
+
+        .auth-option.email,
+        .auth-option.guest {
+            background: rgba(255, 255, 255, 0.04);
+            color: #e8e8ec;
+        }
+
+        .auth-option:last-of-type {
+            margin-bottom: 0;
+        }
+
+        /* ---------- Google account chooser ---------- */
+        .google-head {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .google-mark {
+            width: 26px;
+            height: 26px;
+            margin-bottom: 16px;
+        }
+
+        .google-head h2 {
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: 500;
+            letter-spacing: 0;
+        }
+
+        .google-head p {
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .google-account {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 13px 4px;
+            background: transparent;
+            border: none;
+            border-top: 1px solid var(--panel-border);
+            color: var(--text);
+            font-family: inherit;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .google-account:last-of-type {
+            border-bottom: 1px solid var(--panel-border);
+        }
+
+        .google-account:hover .g-name {
+            color: var(--accent);
+        }
+
+        .g-avatar {
+            width: 38px;
+            height: 38px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: linear-gradient(145deg, var(--accent), rgba(var(--accent-rgb), 0.55));
+            color: #0a0a0b;
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .g-avatar.icon {
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid var(--panel-border);
+        }
+
+        .g-avatar.icon svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .g-text {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .g-name {
+            color: #ffffff;
+            font-size: 14.5px;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        .g-mail {
+            color: var(--muted);
+            font-size: 12.5px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* ---------- Email & password ---------- */
+        .auth-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 18px;
+            padding: 4px;
+            background: #0d0d0f;
+            border: 1px solid var(--panel-border);
+            border-radius: 14px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 10px;
+            background: transparent;
+            border: none;
+            border-radius: 10px;
+            color: var(--muted);
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .auth-tab.active {
+            background: var(--accent);
+            color: #0a0a0b;
+            font-weight: 700;
+        }
+
+        .auth-form {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .auth-form.active {
+            display: flex;
+        }
+
+        .auth-input {
+            width: 100%;
+            padding: 13px 15px;
+            background: #0b0b0d;
+            border: 1px solid var(--panel-border);
+            border-radius: 12px;
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 14.5px;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .auth-input::placeholder {
+            color: #5e5e66;
+        }
+
+        .auth-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.18);
+        }
+
+        .auth-submit {
+            width: 100%;
+            margin-top: 4px;
+            padding: 13px;
+            background: var(--accent);
+            color: #0a0a0b;
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 14.5px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 28px rgba(var(--accent-rgb), 0.24);
+            transition: transform 0.2s ease, filter 0.2s ease;
+        }
+
+        .auth-submit:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.08);
+        }
+
+        .auth-error {
+            min-height: 18px;
+            margin: 2px 0;
+            color: #ff6b6b;
+            font-size: 12.5px;
+            text-align: center;
+        }
+
+        /* ---------- Back + footer ---------- */
+        .auth-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 18px;
+            padding: 0;
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            font-family: inherit;
+            font-size: 12.5px;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .auth-back:hover {
+            color: var(--accent);
+        }
+
+        .auth-foot {
+            margin-top: 20px;
+            color: var(--muted);
+            font-size: 11.5px;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .auth-foot a {
+            color: var(--muted);
+            text-decoration: none;
+        }
+
+        .auth-foot a:hover {
+            color: var(--accent);
+        }
+
         @media (max-width: 480px) {
-            .auth-container { padding: 25px 20px; }
-            .social-btn { padding: 10px; }
+            body { padding: 24px 12px; }
+            .auth-shell { min-height: calc(100vh - 48px); }
+            .auth-brand { margin-bottom: 20px; }
+            .auth-logo { width: 58px; height: 58px; margin-bottom: 12px; }
+            .auth-logo img { width: 40px; height: 40px; }
+            .auth-wordmark { font-size: 1.12rem; letter-spacing: 0.09em; }
+            .auth-card { padding: 22px; border-radius: 24px; }
+            .auth-option { font-size: 14px; padding: 14px 16px; }
+        }
+
+        @media (max-width: 360px) {
+            .auth-wordmark { font-size: 0.98rem; letter-spacing: 0.06em; }
+            .auth-card { padding: 18px; }
         }
     </style>
 </head>
 <body>
-    <div class="start-screen">
-        <img src="logo.svg" alt="Bliss Bloom Events Logo" class="logo">
-        <h1 class="start-title">BLISS BLOOM EVENTS</h1>
-        <p class="start-subtitle">Where Elegance Meets Celebration</p>
-        <div class="auth-container">
-            <div class="auth-tabs">
-                <button class="auth-tab active" onclick="showAuth('login')">Login</button>
-                <button class="auth-tab" onclick="showAuth('signup')">Sign Up</button>
+    <div class="auth-shell">
+        <div class="auth-brand">
+            <div class="auth-logo">
+                <img src="logo.svg" alt="Bliss Bloom Events Logo">
             </div>
-            <form id="loginForm" class="auth-form active" onsubmit="handleAuth(event, 'login')">
-                <input type="email" id="loginEmail" class="auth-input" placeholder="Email" required>
-                <input type="password" id="loginPassword" class="auth-input" placeholder="Password" required>
-                <button type="submit" class="social-btn email-btn">Login with Email</button>
-            </form>
-            <form id="signupForm" class="auth-form" onsubmit="handleAuth(event, 'signup')">
-                <input type="text" id="signupName" class="auth-input" placeholder="Full Name" required>
-                <input type="email" id="signupEmail" class="auth-input" placeholder="Email" required>
-                <input type="password" id="signupPassword" class="auth-input" placeholder="Password" required>
-                <button type="submit" class="social-btn email-btn">Sign Up with Email</button>
-            </form>
-            <div class="divider">OR</div>
-            <button class="social-btn google-btn" onclick="socialLogin('google')">🔍 Continue with Google</button>
-            <button class="social-btn apple-btn" onclick="socialLogin('apple')">🍎 Continue with Apple</button>
-            <button class="social-btn guest-btn" onclick="guestLogin()">👤 Continue as Guest</button>
+            <h1 class="auth-wordmark">BLISS BLOOM <span>EVENTS</span></h1>
+            <p class="auth-tagline">Where Elegance Meets Celebration</p>
         </div>
+
+        <div class="auth-card">
+            <!-- Step 1: sign-in options -->
+            <section id="view-options" class="auth-view active">
+                <button class="auth-option google" type="button" onclick="showView('google')">
+                    <svg viewBox="0 0 48 48" aria-hidden="true">
+                        <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.3 6.1 29.4 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/>
+                        <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.3 6.1 29.4 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
+                        <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.3 0-9.7-3.3-11.3-8l-6.5 5C9.6 39.6 16.2 44 24 44z"/>
+                        <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4.1 5.6l6.2 5.2C41.4 35.6 44 30.3 44 24c0-1.3-.1-2.4-.4-3.5z"/>
+                    </svg>
+                    Sign in with Google
+                </button>
+
+                <button class="auth-option apple" type="button" onclick="socialLogin('apple')">
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M16.37 12.62c.02-2.14 1.75-3.17 1.83-3.22-1-1.46-2.55-1.66-3.1-1.68-1.32-.13-2.58.78-3.25.78-.67 0-1.7-.76-2.8-.74-1.44.02-2.77.84-3.51 2.13-1.5 2.6-.38 6.45 1.08 8.56.71 1.03 1.56 2.19 2.68 2.15 1.08-.04 1.48-.7 2.78-.7 1.3 0 1.66.7 2.8.68 1.16-.02 1.9-1.05 2.61-2.09.82-1.2 1.16-2.36 1.18-2.42-.03-.01-2.26-.87-2.3-3.45zM14.28 6.3c.6-.73 1-1.74.89-2.75-.86.04-1.9.57-2.52 1.3-.55.64-1.04 1.67-.91 2.66.96.07 1.94-.49 2.54-1.21z"/>
+                    </svg>
+                    Sign in with Apple
+                </button>
+
+                <button class="auth-option email" type="button" onclick="showView('email')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect x="3" y="5" width="18" height="14" rx="2"/>
+                        <path d="m3 7 9 6 9-6"/>
+                    </svg>
+                    Email &amp; Password
+                </button>
+
+                <button class="auth-option guest" type="button" onclick="guestLogin()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="8" r="4"/>
+                        <path d="M4 21a8 8 0 0 1 16 0"/>
+                    </svg>
+                    Guest Mode
+                </button>
+            </section>
+
+            <!-- Step 2: Google account chooser -->
+            <section id="view-google" class="auth-view">
+                <div class="google-head">
+                    <svg class="google-mark" viewBox="0 0 48 48" aria-hidden="true">
+                        <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.3 6.1 29.4 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/>
+                        <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.3 6.1 29.4 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
+                        <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.3 0-9.7-3.3-11.3-8l-6.5 5C9.6 39.6 16.2 44 24 44z"/>
+                        <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4.1 5.6l6.2 5.2C41.4 35.6 44 30.3 44 24c0-1.3-.1-2.4-.4-3.5z"/>
+                    </svg>
+                    <h2>Choose an account</h2>
+                    <p>to continue to Bliss Bloom Events</p>
+                </div>
+
+                <button class="google-account" type="button" onclick="chooseGoogleAccount()">
+                    <span class="g-avatar" id="chooserInitial">S</span>
+                    <span class="g-text">
+                        <span class="g-name" id="chooserName">Sharath</span>
+                        <span class="g-mail" id="chooserEmail">sharathbaireddy8045@gmail.com</span>
+                    </span>
+                </button>
+
+                <button class="google-account" type="button" onclick="showView('email')">
+                    <span class="g-avatar icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="8" r="4"/>
+                            <path d="M4 21a8 8 0 0 1 16 0"/>
+                        </svg>
+                    </span>
+                    <span class="g-text">
+                        <span class="g-name">Use another account</span>
+                    </span>
+                </button>
+
+                <button class="auth-back" type="button" onclick="showView('options')">
+                    <span aria-hidden="true">&larr;</span> Back
+                </button>
+            </section>
+
+            <!-- Step 3: email & password -->
+            <section id="view-email" class="auth-view">
+                <div class="auth-tabs">
+                    <button class="auth-tab active" id="tabLogin" type="button" onclick="showAuth('login')">Login</button>
+                    <button class="auth-tab" id="tabSignup" type="button" onclick="showAuth('signup')">Sign Up</button>
+                </div>
+
+                <form id="loginForm" class="auth-form active" onsubmit="handleAuth(event, 'login')">
+                    <input type="email" id="loginEmail" class="auth-input" placeholder="Email" autocomplete="email" required>
+                    <input type="password" id="loginPassword" class="auth-input" placeholder="Password" autocomplete="current-password" required>
+                    <p class="auth-error" id="authError"></p>
+                    <button type="submit" class="auth-submit">Login with Email</button>
+                </form>
+
+                <form id="signupForm" class="auth-form" onsubmit="handleAuth(event, 'signup')">
+                    <input type="text" id="signupName" class="auth-input" placeholder="Full Name" autocomplete="name" required>
+                    <input type="email" id="signupEmail" class="auth-input" placeholder="Email" autocomplete="email" required>
+                    <input type="password" id="signupPassword" class="auth-input" placeholder="Password" autocomplete="new-password" required>
+                    <p class="auth-error" id="signupError"></p>
+                    <button type="submit" class="auth-submit">Sign Up with Email</button>
+                </form>
+
+                <button class="auth-back" type="button" onclick="showView('options')">
+                    <span aria-hidden="true">&larr;</span> Back
+                </button>
+            </section>
+        </div>
+
+        <p class="auth-foot">
+            By continuing you agree to our
+            <a href="#" onclick="return false;">Terms of Service</a> and
+            <a href="#" onclick="return false;">Privacy Policy</a>.
+        </p>
     </div>
+
     <script>
-        function showAuth(type) {
-            document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active'));
-            document.querySelectorAll('.auth-form').forEach(f=>f.classList.remove('active'));
-            if(type==='login') { document.querySelectorAll('.auth-tab')[0].classList.add('active'); document.getElementById('loginForm').classList.add('active'); }
-            else { document.querySelectorAll('.auth-tab')[1].classList.add('active'); document.getElementById('signupForm').classList.add('active'); }
+        var DEFAULT_ACCOUNT = {
+            name: 'Sharath',
+            email: 'sharathbaireddy8045@gmail.com'
+        };
+
+        function showView(name) {
+            document.querySelectorAll('.auth-view').forEach(function (v) {
+                v.classList.remove('active');
+            });
+            var view = document.getElementById('view-' + name);
+            if (view) view.classList.add('active');
+            var err = document.getElementById('authError');
+            var err2 = document.getElementById('signupError');
+            if (err) err.textContent = '';
+            if (err2) err2.textContent = '';
         }
-        function handleAuth(e, type){
-            e.preventDefault();
-            if(type === 'login') {
-                const email = document.getElementById('loginEmail').value;
-                localStorage.setItem('blissUser', JSON.stringify({email, type:'login', name: email.split('@')[0]}));
-            } else {
-                const name = document.getElementById('signupName').value;
-                const email = document.getElementById('signupEmail').value;
-                localStorage.setItem('blissUser', JSON.stringify({name, email, type:'signup'}));
+
+        function showAuth(type) {
+            document.getElementById('tabLogin').classList.toggle('active', type === 'login');
+            document.getElementById('tabSignup').classList.toggle('active', type === 'signup');
+            document.getElementById('loginForm').classList.toggle('active', type === 'login');
+            document.getElementById('signupForm').classList.toggle('active', type === 'signup');
+            var err = document.getElementById('authError');
+            var err2 = document.getElementById('signupError');
+            if (err) err.textContent = '';
+            if (err2) err2.textContent = '';
+        }
+
+        function getAccounts() {
+            try {
+                var list = JSON.parse(localStorage.getItem('blissAccounts') || '[]');
+                return Array.isArray(list) ? list : [];
+            } catch (e) {
+                return [];
             }
+        }
+
+        function saveAccounts(list) {
+            try { localStorage.setItem('blissAccounts', JSON.stringify(list)); } catch (e) {}
+        }
+
+        function finishLogin(user) {
+            try { localStorage.setItem('blissUser', JSON.stringify(user)); } catch (e) {}
             window.location.href = 'web.html';
         }
-        function socialLogin(provider){ localStorage.setItem('blissUser', JSON.stringify({provider, type:'social', name: provider + ' User'})); window.location.href = 'web.html'; }
-        function guestLogin(){ localStorage.setItem('blissUser', JSON.stringify({type:'guest', name: 'Guest User'})); window.location.href = 'web.html'; }
+
+        function chooseGoogleAccount() {
+            var accounts = getAccounts();
+            var acc = accounts[0] || DEFAULT_ACCOUNT;
+            finishLogin({
+                provider: 'google',
+                type: 'social',
+                name: acc.name || DEFAULT_ACCOUNT.name,
+                email: acc.email || DEFAULT_ACCOUNT.email
+            });
+        }
+
+        function socialLogin(provider) {
+            finishLogin({
+                provider: provider,
+                type: 'social',
+                name: provider === 'apple' ? 'Apple User' : provider + ' User'
+            });
+        }
+
+        function guestLogin() {
+            finishLogin({ type: 'guest', name: 'Guest User' });
+        }
+
+        function handleAuth(e, type) {
+            e.preventDefault();
+
+            if (type === 'login') {
+                var email = document.getElementById('loginEmail').value.trim();
+                var password = document.getElementById('loginPassword').value;
+                var accounts = getAccounts();
+                var match = accounts.filter(function (a) {
+                    return a.email && a.email.toLowerCase() === email.toLowerCase() && a.password === password;
+                })[0];
+
+                if (accounts.length && !match) {
+                    document.getElementById('authError').textContent = 'Email or password is incorrect. Please sign up first.';
+                    return;
+                }
+
+                finishLogin({
+                    email: email,
+                    type: 'login',
+                    name: match ? match.name : email.split('@')[0]
+                });
+                return;
+            }
+
+            var name = document.getElementById('signupName').value.trim();
+            var newEmail = document.getElementById('signupEmail').value.trim();
+            var newPassword = document.getElementById('signupPassword').value;
+
+            if (newPassword.length < 4) {
+                document.getElementById('signupError').textContent = 'Password must be at least 4 characters.';
+                return;
+            }
+
+            var accounts = getAccounts();
+            var exists = accounts.some(function (a) {
+                return a.email && a.email.toLowerCase() === newEmail.toLowerCase();
+            });
+            if (exists) {
+                document.getElementById('signupError').textContent = 'An account with this email already exists. Please log in.';
+                return;
+            }
+
+            accounts.push({ name: name, email: newEmail, password: newPassword });
+            saveAccounts(accounts);
+
+            finishLogin({ email: newEmail, type: 'signup', name: name });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var accounts = getAccounts();
+            var acc = accounts[0] || DEFAULT_ACCOUNT;
+            var displayName = acc.name || DEFAULT_ACCOUNT.name;
+            var displayEmail = acc.email || DEFAULT_ACCOUNT.email;
+
+            var nameEl = document.getElementById('chooserName');
+            var emailEl = document.getElementById('chooserEmail');
+            var initialEl = document.getElementById('chooserInitial');
+
+            if (nameEl) nameEl.textContent = displayName;
+            if (emailEl) emailEl.textContent = displayEmail;
+            if (initialEl) initialEl.textContent = (displayName.charAt(0) || 'S').toUpperCase();
+        });
     </script>
 </body>
 </html>

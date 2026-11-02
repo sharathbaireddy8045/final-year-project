@@ -2,26 +2,139 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>Bliss Bloom Events - Welcome</title>
+    <script src="theme.js?v=2"></script>
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { background: url("images/roman-marble.jpeg") center center/cover no-repeat fixed; min-height:100vh; display:flex; align-items:center; justify-content:center; position:relative; }
-        body::before { content:""; position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.65); z-index:0; }
-        .splash-container { position:relative; z-index:1; text-align:center; animation: fadeInUp 1.5s ease-out; }
-        .logo { width:250px; height:auto; margin-bottom:25px; filter: drop-shadow(0 0 40px rgba(255,215,0,0.8)); animation: pulse 2.5s ease-in-out infinite; }
-        .brand-name { color:#FFD700; font-size:48px; font-family: Georgia, serif; letter-spacing:6px; font-weight:bold; text-shadow:3px 3px 6px rgba(0,0,0,0.9); margin-bottom:12px; }
-        .tagline { color:#f5f5f5; font-size:22px; font-style:italic; margin-bottom:60px; text-shadow:2px 2px 4px rgba(0,0,0,0.9); }
-        .enter-btn { padding:16px 60px; background:linear-gradient(135deg, #FFD700, #B8860B); color:#000; border:none; border-radius:50px; font-size:19px; font-weight:bold; cursor:pointer; transition:0.3s; box-shadow:0 12px 35px rgba(255,215,0,0.5); letter-spacing:3px; }
-        .enter-btn:hover { transform:scale(1.12); box-shadow:0 18px 45px rgba(255,215,0,0.7); }
-        @keyframes fadeInUp { from { opacity:0; transform:translateY(40px); } to { opacity:1; transform:translateY(0); } }
-        @keyframes pulse { 0%, 100% { transform:scale(1); } 50% { transform:scale(1.06); } }
+        :root {
+            --accent: #ff6b35;
+            --accent-rgb: 255, 107, 53;
+            --page-bg: #0a0a0b;
+            --text: #f2f2f2;
+            --muted: #8a8a92;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body { min-height: 100%; }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 28px 18px;
+            background-color: var(--page-bg);
+            background-image:
+                radial-gradient(circle at 50% 0%, rgba(var(--accent-rgb), 0.16), transparent 46%),
+                radial-gradient(circle at 15% 90%, rgba(var(--accent-rgb), 0.07), transparent 40%);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        .splash-container {
+            position: relative;
+            text-align: center;
+            animation: fadeInUp 1.1s ease-out both;
+        }
+
+        .logo-ring {
+            width: 132px;
+            height: 132px;
+            margin: 0 auto 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(var(--accent-rgb), 0.45);
+            border-radius: 50%;
+            background: rgba(var(--accent-rgb), 0.06);
+            box-shadow: 0 0 60px rgba(var(--accent-rgb), 0.28), inset 0 0 30px rgba(var(--accent-rgb), 0.08);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        .logo-ring img {
+            width: 86px;
+            height: 86px;
+            display: block;
+        }
+
+        .brand-name {
+            color: #ffffff;
+            font-size: clamp(1.7rem, 5vw, 3rem);
+            font-weight: 800;
+            letter-spacing: 0.16em;
+            line-height: 1.15;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .brand-name span {
+            color: var(--accent);
+            text-shadow: 0 0 30px rgba(var(--accent-rgb), 0.5);
+        }
+
+        .tagline {
+            margin: 14px 0 44px;
+            color: var(--muted);
+            font-size: clamp(0.95rem, 2vw, 1.08rem);
+            letter-spacing: 0.04em;
+        }
+
+        .enter-btn {
+            padding: 15px 58px;
+            background: var(--accent);
+            color: #0a0a0b;
+            border: none;
+            border-radius: 999px;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: 0.22em;
+            cursor: pointer;
+            box-shadow: 0 14px 38px rgba(var(--accent-rgb), 0.34);
+            transition: transform 0.22s ease, box-shadow 0.22s ease, filter 0.22s ease;
+        }
+
+        .enter-btn:hover {
+            transform: translateY(-2px) scale(1.03);
+            filter: brightness(1.08);
+            box-shadow: 0 20px 48px rgba(var(--accent-rgb), 0.46);
+        }
+
+        .enter-btn:active {
+            transform: translateY(0) scale(0.99);
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(28px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 60px rgba(var(--accent-rgb), 0.28), inset 0 0 30px rgba(var(--accent-rgb), 0.08); }
+            50% { transform: scale(1.04); box-shadow: 0 0 80px rgba(var(--accent-rgb), 0.38), inset 0 0 36px rgba(var(--accent-rgb), 0.12); }
+        }
+
+        @media (max-width: 480px) {
+            .logo-ring { width: 104px; height: 104px; margin-bottom: 22px; }
+            .logo-ring img { width: 68px; height: 68px; }
+            .brand-name { font-size: clamp(1.35rem, 7vw, 1.9rem); letter-spacing: 0.1em; }
+            .tagline { margin-bottom: 34px; }
+            .enter-btn { padding: 14px 46px; letter-spacing: 0.18em; }
+        }
+
+        @media (max-width: 360px) {
+            .brand-name { font-size: 1.2rem; letter-spacing: 0.07em; }
+        }
     </style>
 </head>
 <body>
     <div class="splash-container">
-        <img src="logo.svg" alt="Bliss Bloom Events" class="logo">
-        <h1 class="brand-name">BLISS BLOOM EVENTS</h1>
+        <div class="logo-ring">
+            <img src="logo.svg" alt="Bliss Bloom Events">
+        </div>
+        <h1 class="brand-name">BLISS BLOOM <span>EVENTS</span></h1>
         <p class="tagline">Where Elegance Meets Celebration</p>
         <button class="enter-btn" onclick="window.location.href='index.html'">ENTER</button>
     </div>
