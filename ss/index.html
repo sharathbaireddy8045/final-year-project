@@ -4,17 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>Bliss Bloom Events - Login</title>
-    <script src="theme.js?v=2"></script>
+    <script src="theme.js?v=3"></script>
     <style>
         :root {
-            --accent: #ff6b35;
-            --accent-rgb: 255, 107, 53;
-            --page-bg: #0a0a0b;
-            --panel: #141416;
-            --panel-2: #1a1a1d;
-            --panel-border: #2a2a2e;
-            --text: #f2f2f2;
-            --muted: #8a8a92;
+            --accent: #e8c96a;
+            --accent-rgb: 232, 201, 106;
+            --page-bg: #0b0a07;
+            --panel: #15130e;
+            --panel-2: #1c1912;
+            --panel-border: #2f2a1f;
+            --text: #f5f1e6;
+            --muted: #9c9583;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -26,8 +26,9 @@
             padding: 36px 16px;
             background-color: var(--page-bg);
             background-image:
-                radial-gradient(circle at 50% 0%, rgba(var(--accent-rgb), 0.14), transparent 44%),
-                radial-gradient(circle at 85% 100%, rgba(var(--accent-rgb), 0.06), transparent 42%);
+                radial-gradient(circle at 50% -6%, rgba(var(--accent-rgb), 0.20), transparent 44%),
+                radial-gradient(circle at 88% 104%, rgba(var(--accent-rgb), 0.09), transparent 40%),
+                radial-gradient(circle at 6% 20%, rgba(var(--accent-rgb), 0.05), transparent 34%);
             background-attachment: fixed;
             color: var(--text);
             font-family: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
@@ -44,59 +45,84 @@
 
         /* ---------- Brand ---------- */
         .auth-brand {
-            margin-bottom: 26px;
+            position: relative;
+            margin-bottom: 30px;
             text-align: center;
         }
 
         .auth-logo {
-            width: 66px;
-            height: 66px;
-            margin: 0 auto 16px;
+            width: 76px;
+            height: 76px;
+            margin: 0 auto 18px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid rgba(var(--accent-rgb), 0.4);
+            border: 1px solid rgba(var(--accent-rgb), 0.55);
             border-radius: 50%;
-            background: rgba(var(--accent-rgb), 0.06);
-            box-shadow: 0 0 40px rgba(var(--accent-rgb), 0.22);
+            background: radial-gradient(circle at 50% 28%, rgba(var(--accent-rgb), 0.18), rgba(var(--accent-rgb), 0.02) 72%);
+            box-shadow:
+                0 0 0 6px rgba(var(--accent-rgb), 0.05),
+                0 0 48px rgba(var(--accent-rgb), 0.30),
+                inset 0 0 24px rgba(var(--accent-rgb), 0.12);
         }
 
         .auth-logo img {
-            width: 46px;
-            height: 46px;
+            width: 52px;
+            height: 52px;
             display: block;
+            filter: drop-shadow(0 0 14px rgba(var(--accent-rgb), 0.55));
         }
 
         .auth-wordmark {
-            color: #ffffff;
-            font-size: clamp(1.25rem, 4.6vw, 1.75rem);
-            font-weight: 800;
-            letter-spacing: 0.14em;
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: clamp(1.35rem, 4.9vw, 1.95rem);
+            font-weight: 700;
+            letter-spacing: 0.18em;
             line-height: 1.2;
             text-transform: uppercase;
             white-space: nowrap;
+            background: linear-gradient(100deg, #f8e9bb 0%, #e8c96a 30%, #b8912f 52%, #f3dfa0 76%, #caa64c 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 16px rgba(var(--accent-rgb), 0.30));
         }
 
         .auth-wordmark span {
-            color: var(--accent);
-            text-shadow: 0 0 22px rgba(var(--accent-rgb), 0.45);
+            color: transparent;
+            -webkit-text-fill-color: transparent;
+            text-shadow: none;
         }
 
         .auth-tagline {
-            margin-top: 9px;
-            color: var(--muted);
-            font-size: 13px;
-            letter-spacing: 0.03em;
+            margin-top: 11px;
+            color: #b3a888;
+            font-size: 10.5px;
+            font-weight: 600;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+        }
+
+        .auth-brand::after {
+            content: "";
+            display: block;
+            width: 128px;
+            height: 1px;
+            margin: 16px auto 0;
+            background: linear-gradient(90deg, transparent, rgba(var(--accent-rgb), 0.75), transparent);
         }
 
         /* ---------- Card ---------- */
         .auth-card {
             width: min(440px, 100%);
             padding: 30px;
-            background: var(--panel);
-            border: 1px solid var(--panel-border);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.025), transparent 42%), var(--panel);
+            border: 1px solid rgba(var(--accent-rgb), 0.16);
             border-radius: 28px;
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+            box-shadow:
+                0 30px 80px rgba(0, 0, 0, 0.58),
+                inset 0 1px 0 rgba(255, 255, 255, 0.04);
         }
 
         .auth-view {

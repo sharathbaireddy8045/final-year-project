@@ -1,5 +1,6 @@
 (function () {
     var THEMES = {
+        gold:     { name: 'Bliss Gold',        bg: '#0b0a07', panel: '#15130e', panel2: '#1c1912', border: '#2f2a1f', text: '#f5f1e6', muted: '#9c9583', accent: '#e8c96a', rgb: '232, 201, 106' },
         cyber:    { name: 'Cyber Night',       bg: '#0a0a0b', panel: '#141416', panel2: '#1a1a1d', border: '#2a2a2e', text: '#f2f2f2', muted: '#8a8a92', accent: '#ff6b35', rgb: '255, 107, 53' },
         sunset:   { name: 'Sunset Ember',      bg: '#140b07', panel: '#1c120c', panel2: '#241710', border: '#3a281d', text: '#f6ede7', muted: '#a8968a', accent: '#ff9f43', rgb: '255, 159, 67' },
         violet:   { name: 'Aurora Violet',     bg: '#0d0714', panel: '#150d1f', panel2: '#1d1229', border: '#332146', text: '#f1e9f9', muted: '#a292b5', accent: '#b06bff', rgb: '176, 107, 255' },
@@ -10,9 +11,11 @@
         graphite: { name: 'Titanium Graphite', bg: '#0b0b0d', panel: '#141417', panel2: '#1a1a1e', border: '#2c2c31', text: '#f0f0f2', muted: '#909096', accent: '#c9ced6', rgb: '201, 206, 214' }
     };
 
+    var STORAGE_KEY = 'blissTheme2';
+
     function applyBlissTheme(key) {
         var valid = !!THEMES[key];
-        var t = valid ? THEMES[key] : THEMES.cyber;
+        var t = valid ? THEMES[key] : THEMES.gold;
         var root = document.documentElement;
         var style = root.style;
         style.setProperty('--accent', t.accent);
@@ -23,15 +26,15 @@
         style.setProperty('--panel-border', t.border);
         style.setProperty('--text', t.text);
         style.setProperty('--muted', t.muted);
-        root.setAttribute('data-theme', valid ? key : 'cyber');
-        try { localStorage.setItem('blissTheme', valid ? key : 'cyber'); } catch (e) {}
-        return valid ? key : 'cyber';
+        root.setAttribute('data-theme', valid ? key : 'gold');
+        try { localStorage.setItem(STORAGE_KEY, valid ? key : 'gold'); } catch (e) {}
+        return valid ? key : 'gold';
     }
 
     window.BLISS_THEMES = THEMES;
     window.applyBlissTheme = applyBlissTheme;
 
     var saved = null;
-    try { saved = localStorage.getItem('blissTheme'); } catch (e) {}
-    applyBlissTheme(THEMES[saved] ? saved : 'cyber');
+    try { saved = localStorage.getItem(STORAGE_KEY); } catch (e) {}
+    applyBlissTheme(THEMES[saved] ? saved : 'gold');
 })();

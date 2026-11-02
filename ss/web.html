@@ -4,8 +4,8 @@
  <meta charset="UTF-8">
  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
  <title>Bliss Bloom Events</title>
- <link rel="stylesheet" href="web.css?v=4">
-    <script src="theme.js?v=2"></script>
+ <link rel="stylesheet" href="web.css?v=6">
+    <script src="theme.js?v=3"></script>
  <style>
         html, body { max-width: 100%; overflow-x: hidden; }
         img, video { max-width: 100%; height: auto; }
@@ -24,18 +24,14 @@
 
  <header class="topbar">
  <h1 class="brand-wordmark">BLISS BLOOM <span>EVENTS</span></h1>
- <div class="header-actions">
- <button id="brandBtn" class="icon-btn brand-btn" type="button" title="Bliss Bloom Events" aria-label="Bliss Bloom Events">
+ <button id="brandBtn" class="icon-btn brand-btn" type="button" title="Themes" aria-label="Themes" aria-expanded="false">
  <span class="brand-glyph" aria-hidden="true">B</span>
  </button>
- <button id="themeBtn" class="icon-btn" type="button" title="Themes" aria-label="Themes" aria-expanded="false">
+ <button id="themeBtn" class="icon-btn" type="button" title="Account &amp; settings" aria-label="Account &amp; settings" aria-expanded="false">
  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
  <circle cx="12" cy="12" r="3"/>
  <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.11-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 8.9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 8.96 4.6 1.7 1.7 0 0 0 10 3.05V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1z"/>
  </svg>
- </button>
- <button id="accountBtn" class="icon-btn avatar-btn" type="button" title="Account" aria-label="Account" aria-expanded="false">
- <span id="avatarInitial">G</span>
  </button>
 
  <div id="accountMenu" class="account-menu" hidden>
@@ -77,6 +73,10 @@
  <div id="themePanel" class="theme-panel" hidden>
  <div class="panel-label">Themes</div>
  <div class="theme-grid">
+ <button class="theme-option theme-option-featured" data-theme="gold" type="button" style="--swatch:#e8c96a">
+ <svg class="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8l4 3 5-6 5 6 4-3-2 10H5L3 8Z"/><path d="M5 18h14"/></svg>
+ <span>Bliss Gold</span>
+ </button>
  <button class="theme-option" data-theme="cyber" type="button" style="--swatch:#ff6b35">
  <svg class="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"/></svg>
  <span>Cyber Night</span>
@@ -109,7 +109,6 @@
  <svg class="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c4 5 6 7.5 6 10.5a6 6 0 0 1-12 0C6 10.5 8 8 12 3Z"/></svg>
  <span>Titanium Graphite</span>
  </button>
- </div>
  </div>
  </div>
  </header>
@@ -652,21 +651,20 @@
 
      var name = user.name || (user.provider ? user.provider + ' User' : 'Guest User');
      var initial = (name.charAt(0) || 'G').toUpperCase();
-     document.getElementById('avatarInitial').textContent = initial;
      document.getElementById('accountAvatar').textContent = initial;
      document.getElementById('accountName').textContent = name;
      document.getElementById('accountSub').textContent = user.email ? user.email : 'Local guest account';
 
-     var themeBtn = document.getElementById('themeBtn');
-     var accountBtn = document.getElementById('accountBtn');
+     var brandBtn = document.getElementById('brandBtn');
+     var settingsBtn = document.getElementById('themeBtn');
      var themePanel = document.getElementById('themePanel');
      var accountMenu = document.getElementById('accountMenu');
 
      function closePanels() {
          themePanel.hidden = true;
          accountMenu.hidden = true;
-         themeBtn.setAttribute('aria-expanded', 'false');
-         accountBtn.setAttribute('aria-expanded', 'false');
+         brandBtn.setAttribute('aria-expanded', 'false');
+         settingsBtn.setAttribute('aria-expanded', 'false');
      }
 
      function openPanel(panel, button) {
@@ -678,18 +676,20 @@
          }
      }
 
-     themeBtn.addEventListener('click', function (e) {
+     /* Logo button opens the theme picker */
+     brandBtn.addEventListener('click', function (e) {
          e.stopPropagation();
-         openPanel(themePanel, themeBtn);
+         openPanel(themePanel, brandBtn);
      });
 
-     accountBtn.addEventListener('click', function (e) {
+     /* Settings gear opens the account / settings menu */
+     settingsBtn.addEventListener('click', function (e) {
          e.stopPropagation();
-         openPanel(accountMenu, accountBtn);
+         openPanel(accountMenu, settingsBtn);
      });
 
      document.addEventListener('click', function (e) {
-         if (!e.target.closest('.header-actions')) { closePanels(); }
+         if (!e.target.closest('.topbar')) { closePanels(); }
      });
 
      document.addEventListener('keydown', function (e) {
@@ -697,7 +697,7 @@
      });
 
      /* Theme picker */
-     var activeTheme = document.documentElement.getAttribute('data-theme') || 'cyber';
+     var activeTheme = document.documentElement.getAttribute('data-theme') || 'gold';
      document.querySelectorAll('.theme-option').forEach(function (opt) {
          opt.classList.toggle('active', opt.getAttribute('data-theme') === activeTheme);
          opt.addEventListener('click', function () {
@@ -710,12 +710,6 @@
              closePanels();
              toast((window.BLISS_THEMES[key] ? window.BLISS_THEMES[key].name : 'Theme') + ' applied');
          });
-     });
-
-     /* Brand mark returns home */
-     document.getElementById('brandBtn').addEventListener('click', function () {
-         document.getElementById('home-tab').checked = true;
-         window.scrollTo({ top: 0, behavior: 'smooth' });
      });
 
      /* Account menu actions */
