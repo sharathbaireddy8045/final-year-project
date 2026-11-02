@@ -1,3 +1,10 @@
+/* ========== Theme variables ========== */
+:root {
+    --accent: #FFD700;
+    --accent-rgb: 255, 215, 0;
+    --page-bg: #0d0d0d;
+    --panel: rgba(0, 0, 0, 0.82);
+}
 /* ========== Global Styles ========== */
 * {
     margin: 0;
@@ -20,7 +27,7 @@ html, body {
 
 body {
     /* Plain dark background (no background image) */
-    background-color: #0d0d0d;
+    background-color: var(--page-bg);
     font-family: 'Arial', sans-serif;
     color: #E0E0E0;
     padding-top: 100px; /* Safe space below the navigation bar across all screens */
@@ -31,7 +38,7 @@ body {
 /* Light Mode Support - Keeping background behaviors identical */
 @media (prefers-color-scheme: light) {
     body {
-        background-color: #0d0d0d;
+        background-color: var(--page-bg);
         color: #E0E0E0;
     }
 }
@@ -58,9 +65,9 @@ input.nav-tab-engine {
     justify-content: center;
     align-items: center;
     gap: 6px;
-    border: 1px solid rgba(255, 215, 0, 0.45);
+    border: 1px solid rgba(var(--accent-rgb), 0.45);
     border-radius: 999px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55), 0 0 18px rgba(255, 215, 0, 0.18);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55), 0 0 18px rgba(var(--accent-rgb), 0.18);
     z-index: 1000;
     flex-wrap: wrap;
 }
@@ -85,14 +92,14 @@ input.nav-tab-engine {
 
 #themeLogoBtn:hover {
     transform: scale(1.08);
-    box-shadow: 0 0 14px rgba(255, 215, 0, 0.55);
+    box-shadow: 0 0 14px rgba(var(--accent-rgb), 0.55);
 }
 
 #themeLogoBtn img {
     width: 40px;
     height: 40px;
     display: block;
-    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.45));
+    filter: drop-shadow(0 0 8px rgba(var(--accent-rgb), 0.45));
 }
 
 .navbar label {
@@ -101,15 +108,15 @@ input.nav-tab-engine {
     cursor: pointer;
     transition: 0.25s ease-in-out;
     border-radius: 999px;
-    color: #FFD700;
+    color: var(--accent);
     white-space: nowrap; /* Prevents text splitting inside a single tab button */
     border: 1px solid transparent;
 }
 
 .navbar label:hover {
     color: #ffffff;
-    background: rgba(255, 215, 0, 0.12);
-    border-color: rgba(255, 215, 0, 0.35);
+    background: rgba(var(--accent-rgb), 0.12);
+    border-color: rgba(var(--accent-rgb), 0.35);
 }
 
 /* Pure CSS Engine: Active Tab Color State Links */
@@ -122,8 +129,8 @@ input.nav-tab-engine {
 #contact-tab:checked ~ .navbar label[for="contact-tab"] {
     font-weight: bold;
     color: #1a1a1a;
-    background: #FFD700;
-    border-color: #FFD700;
+    background: var(--accent);
+    border-color: var(--accent);
 }
 
 /* ========== Pages Engine Layout ========== */
@@ -134,9 +141,9 @@ input.nav-tab-engine {
     max-width: 1000px; /* Fits comfortably on broad Windows layouts */
     margin: 0 auto 40px auto;
     min-height: calc(100vh - 140px); /* Adjust dynamically to viewport without clipping */
-    background: rgba(0, 0, 0, 0.82); /* Slightly darker background for better text readability over the image */
+    background: var(--panel);
     border-radius: 10px;
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+    box-shadow: 0 0 15px rgba(var(--accent-rgb), 0.4);
 }
 
 /* Tab Switching Logical Rules */
@@ -168,10 +175,10 @@ input.nav-tab-engine {
 
 .menu-category-title {
     font-size: 22px;
-    color: #FFD700;
+    color: var(--accent);
     margin: 25px 0 10px 0;
     text-align: left;
-    border-bottom: 1px dashed #FFD700;
+    border-bottom: 1px dashed var(--accent);
     padding-bottom: 5px;
 }
 
@@ -189,7 +196,7 @@ input.nav-tab-engine {
 
 .menu-item:hover {
     transform: scale(1.01);
-    box-shadow: 0px 4px 8px rgba(255, 215, 0, 0.4);
+    box-shadow: 0px 4px 8px rgba(var(--accent-rgb), 0.4);
 }
 
 .menu-item img {
@@ -198,7 +205,7 @@ input.nav-tab-engine {
     border-radius: 50%;
     object-fit: cover;
     flex-shrink: 0; /* Prevents image distortions on smaller viewports */
-    border: 2px solid #FFD700;
+    border: 2px solid var(--accent);
     cursor: pointer;
 }
 
@@ -210,7 +217,7 @@ input.nav-tab-engine {
 .menu-item-title {
     font-weight: bold;
     font-size: 18px;
-    color: #FFD700;
+    color: var(--accent);
     cursor: pointer;
 }
 
@@ -257,7 +264,7 @@ input.nav-tab-engine {
     background: rgba(0, 0, 0, 0.6);
     padding: 15px;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+    box-shadow: 0 0 10px rgba(var(--accent-rgb), 0.2);
     transition: 0.3s ease-in-out;
     display: flex;
     flex-direction: column;
@@ -277,12 +284,12 @@ input.nav-tab-engine {
     margin: 12px 0 8px 0;
     font-size: 16px;
     font-weight: bold;
-    color: gold;
+    color: var(--accent);
 }
 
 .decor-item:hover {
     transform: scale(1.03);
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+    box-shadow: 0 0 15px rgba(var(--accent-rgb), 0.7);
 }
 
 /* ========== Schedule Styles ========== */
@@ -299,14 +306,14 @@ input.nav-tab-engine {
     padding: 20px;
     color: white;
     background: rgba(20, 20, 20, 0.8);
-    border: 1px solid gold;
-    border-left: 5px solid gold;
+    border: 1px solid var(--accent);
+    border-left: 5px solid var(--accent);
     border-radius: 10px;
     text-align: left;
 }
 
 .schedule-day h3 {
-    color: gold;
+    color: var(--accent);
     margin-bottom: 10px;
     font-size: 18px;
 }
@@ -331,13 +338,13 @@ input.nav-tab-engine {
     width: 160px;
     height: 160px;
     margin: 15px auto;
-    border: 3px solid gold;
+    border: 3px solid var(--accent);
     border-radius: 8px;
     display: block;
 }
 
 .venue-item a {
-    color: #FFD700;
+    color: var(--accent);
     font-size: 16px;
     text-decoration: underline;
     word-break: break-all; /* Prevents overflow links from breaking mobile designs */
@@ -354,14 +361,14 @@ form.rsvp-form-container {
     max-width: 600px;
     margin: 10px auto;
     border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(255, 215, 0, 0.3);
+    box-shadow: 0px 4px 10px rgba(var(--accent-rgb), 0.3);
     color: white;
 }
 
 form.rsvp-form-container label {
     align-self: flex-start;
     margin-top: 15px;
-    color: #FFD700;
+    color: var(--accent);
     font-weight: bold;
     font-size: 15px;
 }
@@ -374,7 +381,7 @@ form.rsvp-form-container label {
     font-size: 16px;
     color: white;
     background: rgba(50, 50, 50, 0.8);
-    border: 2px solid gold;
+    border: 2px solid var(--accent);
     border-radius: 8px;
     outline: none;
     transition: 0.3s;
@@ -386,7 +393,7 @@ form.rsvp-form-container label {
 }
 
 .form-input:focus, .text-box:focus {
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+    box-shadow: 0 0 10px rgba(var(--accent-rgb), 0.8);
     background: rgba(70, 70, 70, 0.9);
 }
 
@@ -401,7 +408,7 @@ form.rsvp-form-container label {
 #total-cost-display, #advance-payment-display {
     font-size: 18px;
     font-weight: bold;
-    color: #FFD700;
+    color: var(--accent);
     margin-top: 15px;
 }
 
@@ -416,7 +423,7 @@ form.rsvp-form-container label {
 .btn {
     width: 100%;
     max-width: 280px;
-    background: #FFD700;
+    background: var(--accent);
     color: black;
     padding: 12px 20px;
     font-size: 16px;
@@ -452,7 +459,7 @@ form.rsvp-form-container label {
 .modal-content {
     max-width: 95%;
     max-height: 75%;
-    border: 2px solid gold;
+    border: 2px solid var(--accent);
     border-radius: 8px;
     object-fit: contain;
 }
@@ -467,7 +474,7 @@ form.rsvp-form-container label {
 }
 
 .caption-text {
-    color: gold;
+    color: var(--accent);
     margin-top: 15px;
     font-size: 18px;
     padding: 0 10px;
@@ -478,7 +485,7 @@ form.rsvp-form-container label {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    background: gold;
+    background: var(--accent);
     color: black;
     border: none;
     padding: 10px 15px;
@@ -496,7 +503,7 @@ form.rsvp-form-container label {
 }
 .detail-title {
     font-size: 24px;
-    color: #FFD700;
+    color: var(--accent);
     margin: 15px 0;
 }
 .detail-image {
@@ -504,7 +511,7 @@ form.rsvp-form-container label {
     width: 350px;
     height: auto;
     border-radius: 10px;
-    border: 2px solid #FFD700;
+    border: 2px solid var(--accent);
     margin-bottom: 15px;
 }
 .detail-description, .detail-additional {
