@@ -18,6 +18,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const rsvpForm = document.getElementById("rsvp-form");
     const backToTopBtn = document.getElementById("back-to-top-btn");
 
+    let currentTotalCost = 0;
+    let currentAdvancePayment = 0;
+
     const imageModal = document.getElementById("imageModal");
     const modalImage = document.getElementById("modalImage");
     const captionText = document.getElementById("caption");
@@ -175,7 +178,76 @@ document.addEventListener("DOMContentLoaded", () => {
         if (totalCostDisplay) totalCostDisplay.textContent = `Total Estimated Cost: ₹${totalCost}`;
         
         const advance = Math.round(totalCost * 0.30);
+        currentTotalCost = totalCost;
+        currentAdvancePayment = advance;
         if (advancePaymentDisplay) advancePaymentDisplay.textContent = `Advance Payment (30%): ₹${advance}`;
+    }
+
+    // ===============================
+    // SELECTED ITEMS SNAPSHOT
+    // ===============================
+    function collectSelectedItems() {
+        const items = [];
+
+        menuCheckboxes.forEach((checkbox) => {
+            if (!checkbox.checked) return;
+            const qtyInput = document.getElementById(`${checkbox.dataset.itemId}-qty`);
+            const quantity = qtyInput ? parseInt(qtyInput.value) || 0 : 0;
+            const cost = parseInt(checkbox.dataset.itemCost) || 0;
+            items.push({
+                id: checkbox.dataset.itemId,
+                name: checkbox.dataset.itemName,
+                type: "dish",
+                quantity: quantity,
+                cost: cost,
+                subtotal: cost * quantity
+            });
+        });
+
+        decorCheckboxes.forEach((checkbox) => {
+            if (!checkbox.checked) return;
+            const cost = parseInt(checkbox.dataset.itemCost) || 0;
+            items.push({
+                id: checkbox.dataset.itemId,
+                name: checkbox.dataset.itemName,
+                type: "decor",
+                quantity: 1,
+                cost: cost,
+                subtotal: cost
+            });
+        });
+
+        return items;
+    }
+
+    // ===============================
+    // LOCAL FALLBACK (only if db.js could not load)
+    // ===============================
+    function saveRsvpLocally(payload) {
+        let list = [];
+        let user = null;
+
+        try { list = JSON.parse(localStorage.getItem("blissRsvps") || "[]"); } catch (e) { list = []; }
+        if (!Array.isArray(list)) list = [];
+
+        try { user = JSON.parse(localStorage.getItem("blissUser") || "null"); } catch (e) { user = null; }
+
+        const id = "LOCAL-" + Date.now().toString(36).toUpperCase() + "-" +
+            Math.random().toString(36).slice(2, 6).toUpperCase();
+
+        list.unshift(Object.assign({
+            id: id,
+            createdAt: new Date().toISOString(),
+            status: "pending",
+            userId: (user && user.uid) || ("local-" + ((user && user.email) || "guest")),
+            userEmail: (user && user.email) || "",
+            userName: (user && user.name) || "",
+            anonymous: !user || user.type === "guest"
+        }, payload));
+
+        try { localStorage.setItem("blissRsvps", JSON.stringify(list.slice(0, 50))); } catch (e) {}
+
+        return { id: id, local: true };
     }
 
     // ===============================
@@ -192,10 +264,20 @@ document.addEventListener("DOMContentLoaded", () => {
     // RSVP FORM SUBMISSION
     // ===============================
     if (rsvpForm) {
-        rsvpForm.addEventListener("submit", (e) => {
+        rsvpForm.addEventListener("submit", async (e) => {
             e.preventDefault();
+
             const itemsError = document.getElementById("items-error");
+            const submitError = document.getElementById("submit-error");
+            const successBox = document.getElementById("booking-success");
+            const submitBtn = rsvpForm.querySelector('button[type="submit"]');
+
             if (itemsError) itemsError.textContent = "";
+            if (submitError) submitError.textContent = "";
+            if (successBox) {
+                successBox.hidden = true;
+                successBox.textContent = "";
+            }
 
             if (!validateBasicForm()) return;
 
@@ -204,20 +286,61 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            alert("RSVP Submitted Successfully!\n\nThank you for booking with us.");
-            rsvpForm.reset();
+            const payload = {
+                name: document.getElementById("name").value.trim(),
+                email: document.getElementById("email").value.trim(),
+                guests: parseInt(document.getElementById("guests").value, 10) || 1,
+                itemsSummary: dishesDecorSummary.value.trim(),
+                items: collectSelectedItems(),
+                totalCost: currentTotalCost,
+                advancePayment: currentAdvancePayment
+            };
 
-            if (dishesDecorSummary) dishesDecorSummary.value = "";
-            if (totalCostDisplay) totalCostDisplay.textContent = "";
-            if (advancePaymentDisplay) advancePaymentDisplay.textContent = "";
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = "Saving your RSVP…";
+            }
 
-            allCheckboxes.forEach((checkbox) => checkbox.checked = false);
-            quantityInputs.forEach((input) => {
-                input.value = 0;
-                input.parentElement.style.display = "none";
-            });
+            try {
+                const result = (window.BlissDB && typeof window.BlissDB.addRsvp === "function")
+                    ? await window.BlissDB.addRsvp(payload)
+                    : saveRsvpLocally(payload);
 
-            if (selectDecorItemsBtn) selectDecorItemsBtn.style.display = "none";
+                if (successBox) {
+                    successBox.hidden = false;
+                    successBox.textContent = "RSVP saved successfully. Booking ID: " + result.id;
+                    const note = document.createElement("span");
+                    note.textContent = result.local
+                        ? "Saved on this device in demo mode. Add your Firebase keys to store bookings online."
+                        : "We have saved your booking. Our team will contact you shortly.";
+                    successBox.appendChild(note);
+                }
+
+                rsvpForm.reset();
+
+                if (dishesDecorSummary) dishesDecorSummary.value = "";
+                if (totalCostDisplay) totalCostDisplay.textContent = "";
+                if (advancePaymentDisplay) advancePaymentDisplay.textContent = "";
+                currentTotalCost = 0;
+                currentAdvancePayment = 0;
+
+                allCheckboxes.forEach((checkbox) => checkbox.checked = false);
+                quantityInputs.forEach((input) => {
+                    input.value = 0;
+                    input.parentElement.style.display = "none";
+                });
+
+                if (selectDecorItemsBtn) selectDecorItemsBtn.style.display = "none";
+            } catch (error) {
+                if (submitError) {
+                    submitError.textContent = error.message || "Could not save your RSVP. Please try again.";
+                }
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = "Submit RSVP";
+                }
+            }
         });
     }
 

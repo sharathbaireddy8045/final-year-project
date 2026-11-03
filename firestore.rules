@@ -1,0 +1,32 @@
+rules_version = '2';
+
+// Firestore security rules for Bliss Bloom Events.
+//
+//   * Any signed-in visitor (including anonymous guests) can create an RSVP.
+//   * A booking must belong to the account that created it.
+//   * Bookings can only be read by their owner.
+//   * Bookings are append-only: no editing or deleting from the browser.
+//
+// Deploy with:  firebase deploy --only firestore:rules
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /rsvps/{rsvpId} {
+      allow create: if request.auth != null
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.name is string
+        && request.resource.data.email is string
+        && request.resource.data.guests is int
+        && request.resource.data.guests >= 1;
+
+      allow read: if request.auth != null
+        && resource.data.userId == request.auth.uid;
+
+      allow update, delete: if false;
+    }
+
+    // Everything else is closed.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

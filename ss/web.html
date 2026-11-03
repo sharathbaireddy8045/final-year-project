@@ -4,10 +4,11 @@
  <meta charset="UTF-8">
  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
  <title>Bliss Bloom Events</title>
- <link rel="stylesheet" href="web.css?v=7">
+ <link rel="stylesheet" href="web.css?v=9">
     <script src="theme.js?v=3"></script>
     <script src="firebase-config.js?v=1"></script>
     <script type="module" src="auth.js?v=1"></script>
+    <script type="module" src="db.js?v=1"></script>
  <style>
         html, body { max-width: 100%; overflow-x: hidden; }
         img, video { max-width: 100%; height: auto; }
@@ -56,6 +57,10 @@
  <button class="account-item" id="switchAccountBtn" type="button">
  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
  <span>Switch account</span>
+ </button>
+ <button class="account-item" id="myBookingsBtn" type="button">
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+ <span>My Bookings</span>
  </button>
  <button class="account-item" id="manageAccountBtn" type="button">
  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.11-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 8.9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 8.96 4.6 1.7 1.7 0 0 0 10 3.05V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1z"/></svg>
@@ -627,7 +632,10 @@
  <p id="advance-payment-display"></p>
  <p class="booking-note">Online booking is only to make the process of conversation between the customer faster, but you have to visit the place and talk about the Event with us.</p>
 
+ <p id="booking-success" class="booking-success" role="status" hidden></p>
+
  <button type="submit" class="btn">Submit RSVP</button>
+ <div id="submit-error" class="error-message"></div>
  </form>
  </section>
 
@@ -639,6 +647,19 @@
  </div>
  </section>
 
+ <div id="bookingsModal" class="bookings-modal" hidden>
+ <div class="bookings-card" role="dialog" aria-modal="true" aria-labelledby="bookingsTitle">
+ <div class="bookings-head">
+ <div>
+ <h2 id="bookingsTitle" class="bookings-title">My Bookings</h2>
+ <p id="bookingsSub" class="bookings-sub">Your saved RSVPs</p>
+ </div>
+ <button id="bookingsClose" class="bookings-close" type="button" aria-label="Close bookings">&times;</button>
+ </div>
+ <div id="bookingsList" class="bookings-list" aria-live="polite"></div>
+ </div>
+ </div>
+
  <div id="imageModal" class="image-modal" style="display: none;">
  <span class="close-button" role="button" aria-label="Close image modal">✕</span>
  <img class="modal-content" id="modalImage" alt="Enlarged image">
@@ -647,7 +668,7 @@
 
  <button id="back-to-top-btn" class="back-to-top" title="Go to top">↑ Top</button>
 
- <script src="web.js"></script>
+ <script src="web.js?v=2"></script>
 
   <script>
  document.addEventListener('DOMContentLoaded', function () {
@@ -729,7 +750,10 @@
          });
 
          document.addEventListener('keydown', function (e) {
-             if (e.key === 'Escape') { closePanels(); }
+             if (e.key === 'Escape') {
+                 closePanels();
+                 closeBookings();
+             }
          });
 
          /* Theme picker */
@@ -774,6 +798,171 @@
              closePanels();
              toast('No new notifications');
          });
+
+         /* ---------- My Bookings ---------- */
+         var bookingsModal = document.getElementById('bookingsModal');
+         var bookingsList = document.getElementById('bookingsList');
+         var bookingsSub = document.getElementById('bookingsSub');
+         var bookingsClose = document.getElementById('bookingsClose');
+
+         function formatBookingDate(value) {
+             var date = null;
+             if (value && typeof value.toDate === 'function') {
+                 date = value.toDate();
+             } else if (value) {
+                 date = new Date(value);
+             }
+             if (!date || isNaN(date.getTime())) return '';
+             return date.toLocaleDateString(undefined, {
+                 day: 'numeric', month: 'short', year: 'numeric'
+             }) + ' \u00b7 ' + date.toLocaleTimeString(undefined, {
+                 hour: '2-digit', minute: '2-digit'
+             });
+         }
+
+         function readLocalBookings() {
+             var list = [];
+             try { list = JSON.parse(localStorage.getItem('blissRsvps') || '[]'); } catch (e) { list = []; }
+             if (!Array.isArray(list)) return [];
+
+             var email = (user.email || '').toLowerCase();
+             if (!email) return list;
+
+             return list.filter(function (row) {
+                 return (row.userEmail || row.email || '').toLowerCase() === email;
+             });
+         }
+
+         function closeBookings() {
+             if (!bookingsModal) return;
+             bookingsModal.hidden = true;
+             document.body.style.overflow = '';
+         }
+
+         function emptyBookings() {
+             var box = document.createElement('div');
+             box.className = 'bookings-empty';
+             var title = document.createElement('strong');
+             title.textContent = 'No bookings yet';
+             box.appendChild(title);
+             box.appendChild(document.createTextNode('Choose your dishes and decor, then submit the RSVP form. Your bookings will appear here.'));
+             bookingsList.appendChild(box);
+         }
+
+         function renderBooking(booking) {
+             var card = document.createElement('div');
+             card.className = 'booking-card';
+
+             var head = document.createElement('div');
+             head.className = 'booking-card-head';
+
+             var id = document.createElement('div');
+             id.className = 'booking-id';
+             id.textContent = 'Booking #' + booking.id;
+
+             var status = document.createElement('span');
+             status.className = 'booking-status';
+             status.textContent = booking.status || 'pending';
+
+             head.appendChild(id);
+             head.appendChild(status);
+             card.appendChild(head);
+
+             var meta = document.createElement('p');
+             meta.className = 'booking-meta';
+
+             var lines = [];
+             if (booking.name) lines.push('Guest: ' + booking.name);
+             if (booking.email) lines.push('Email: ' + booking.email);
+             if (booking.guests) lines.push('Guests: ' + booking.guests);
+
+             var when = formatBookingDate(booking.createdAt || booking.clientCreatedAt);
+             if (when) lines.push('Booked: ' + when);
+
+             meta.textContent = lines.join(' \u00b7 ');
+             card.appendChild(meta);
+
+             if (booking.itemsSummary) {
+                 var items = document.createElement('pre');
+                 items.className = 'booking-items';
+                 items.textContent = booking.itemsSummary;
+                 card.appendChild(items);
+             }
+
+             if (booking.totalCost || booking.advancePayment) {
+                 var total = document.createElement('div');
+                 total.className = 'booking-total';
+
+                 var totalLabel = document.createElement('span');
+                 totalLabel.textContent = 'Total estimated';
+
+                 var totalValue = document.createElement('span');
+                 totalValue.textContent = '\u20b9' + (Number(booking.totalCost) || 0).toLocaleString('en-IN') +
+                     '  \u00b7  advance \u20b9' + (Number(booking.advancePayment) || 0).toLocaleString('en-IN');
+
+                 total.appendChild(totalLabel);
+                 total.appendChild(totalValue);
+                 card.appendChild(total);
+             }
+
+             bookingsList.appendChild(card);
+         }
+
+         function showBookings(rows) {
+             bookingsList.innerHTML = '';
+             if (!rows || !rows.length) {
+                 emptyBookings();
+                 return;
+             }
+             rows.forEach(renderBooking);
+         }
+
+         function openBookings() {
+             if (!bookingsModal) return;
+             closePanels();
+             bookingsModal.hidden = false;
+             document.body.style.overflow = 'hidden';
+             bookingsSub.textContent = user.email ? user.email : 'Saved on this device';
+             bookingsList.innerHTML = '';
+
+             var loading = document.createElement('div');
+             loading.className = 'bookings-empty';
+             loading.textContent = 'Loading your bookings\u2026';
+             bookingsList.appendChild(loading);
+
+             var request = (window.BlissDB && typeof window.BlissDB.listMyRsvps === 'function')
+                 ? window.BlissDB.listMyRsvps()
+                 : Promise.resolve(readLocalBookings());
+
+             Promise.resolve(request)
+                 .then(showBookings)
+                 .catch(function (error) {
+                     bookingsList.innerHTML = '';
+                     var failed = document.createElement('div');
+                     failed.className = 'bookings-empty';
+                     var title = document.createElement('strong');
+                     title.textContent = 'Could not load bookings';
+                     failed.appendChild(title);
+                     failed.appendChild(document.createTextNode(
+                         (error && error.message) || 'Please try again in a moment.'
+                     ));
+                     bookingsList.appendChild(failed);
+                 });
+         }
+
+         if (document.getElementById('myBookingsBtn')) {
+             document.getElementById('myBookingsBtn').addEventListener('click', openBookings);
+         }
+
+         if (bookingsClose) {
+             bookingsClose.addEventListener('click', closeBookings);
+         }
+
+         if (bookingsModal) {
+             bookingsModal.addEventListener('click', function (e) {
+                 if (e.target === bookingsModal) closeBookings();
+             });
+         }
 
          document.getElementById('signOutBtn').addEventListener('click', goToLogin);
 
