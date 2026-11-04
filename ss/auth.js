@@ -67,6 +67,7 @@ var ERROR_MESSAGES = {
     "auth/popup-blocked": "The browser blocked the sign-in popup. Allow popups and try again.",
     "auth/unauthorized-domain": "This domain is not authorised in Firebase. Add localhost (or your domain) under Authentication \u2192 Settings \u2192 Authorized domains.",
     "auth/operation-not-allowed": "This sign-in method is disabled in Firebase. Enable it under Authentication \u2192 Sign-in method.",
+    "auth/admin-restricted-operation": "Guest Mode is disabled in Firebase. Enable Anonymous under Authentication \u2192 Sign-in method.",
     "auth/network-request-failed": "Network error. Check your connection and try again.",
     "auth/too-many-requests": "Too many attempts. Please wait a minute and try again.",
     "auth/account-exists-with-different-credential": "This email is already linked to a different sign-in method.",
