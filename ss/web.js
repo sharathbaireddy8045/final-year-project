@@ -260,6 +260,118 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ===============================
+    // RSVP EMAIL DELIVERY
+    // ===============================
+    const RSVP_MAIL_TO = "sharath.baireddy@gmail.com";
+
+    // Free access key from https://web3forms.com (create it with the Gmail
+    // address above). Once pasted here, every RSVP is emailed automatically.
+    // While it is empty, submitting opens a pre-filled Gmail draft instead.
+    const RSVP_MAIL_KEY = "";
+
+    function formatRupees(value) {
+        return "₹" + Number(value || 0).toLocaleString("en-IN");
+    }
+
+    function rsvpMailSubject(payload) {
+        return "New RSVP from " + payload.name + " — Bliss Bloom Events";
+    }
+
+    function rsvpMailBody(payload) {
+        return [
+            "Name: " + payload.name,
+            "Email: " + payload.email,
+            "Guests: " + payload.guests,
+            "",
+            "Selected dishes & decor:",
+            payload.itemsSummary,
+            "",
+            "Total cost: " + formatRupees(payload.totalCost),
+            "Advance payment: " + formatRupees(payload.advancePayment),
+            "Submitted: " + new Date().toLocaleString("en-IN")
+        ].join("\n");
+    }
+
+    function gmailComposeUrl(payload) {
+        return "https://mail.google.com/mail/?view=cm&fs=1" +
+            "&to=" + encodeURIComponent(RSVP_MAIL_TO) +
+            "&su=" + encodeURIComponent(rsvpMailSubject(payload)) +
+            "&body=" + encodeURIComponent(rsvpMailBody(payload));
+    }
+
+    function openMailDraft(payload) {
+        try {
+            const draft = window.open(gmailComposeUrl(payload), "_blank");
+            return !!draft;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    /**
+     * Firestore can retry silently for a long time when the API is disabled, so
+     * the booking save is capped to keep the submit button responsive.
+     */
+    function withTimeout(promise, ms) {
+        return Promise.race([
+            promise,
+            new Promise((resolve, reject) => {
+                setTimeout(() => reject(new Error("The online database did not respond in time.")), ms);
+            })
+        ]);
+    }
+
+    /**
+     * Emails the RSVP to the organiser through Web3Forms (a static-site friendly
+     * mail relay). Failures are reported to the caller so the guest still gets a
+     * Gmail draft fallback.
+     */
+    async function sendRsvpEmail(payload) {
+        if (!RSVP_MAIL_KEY) return { ok: false, skipped: true };
+
+        const controller = typeof AbortController === "function" ? new AbortController() : null;
+        const timer = controller ? setTimeout(() => controller.abort(), 12000) : null;
+
+        try {
+            const response = await fetch("https://api.web3forms.com/submit", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify({
+                    access_key: RSVP_MAIL_KEY,
+                    subject: rsvpMailSubject(payload),
+                    from_name: "Bliss Bloom Events",
+                    replyto: payload.email,
+                    Name: payload.name,
+                    Email: payload.email,
+                    Guests: payload.guests,
+                    "Selected dishes & decor": payload.itemsSummary,
+                    "Total cost": formatRupees(payload.totalCost),
+                    "Advance payment": formatRupees(payload.advancePayment),
+                    Submitted: new Date().toLocaleString("en-IN"),
+                    message: rsvpMailBody(payload),
+                    botcheck: false
+                }),
+                signal: controller ? controller.signal : undefined
+            });
+
+            let data = null;
+            try { data = await response.json(); } catch (error) { data = null; }
+
+            return {
+                ok: !!(response.ok && data && data.success),
+                message: (data && data.message) || ""
+            };
+        } catch (error) {
+            return { ok: false, message: "" };
+        } finally {
+            if (timer) clearTimeout(timer);
+        }
+    }
+
+    // ===============================
     // RSVP FORM SUBMISSION
     // ===============================
     if (rsvpForm) {
@@ -295,44 +407,94 @@ document.addEventListener("DOMContentLoaded", () => {
                 advancePayment: currentAdvancePayment
             };
 
+            // Without a Web3Forms key, prepare a Gmail draft while the click is
+            // still active so the browser permits the new tab.
+            let draftOpened = false;
+            if (!RSVP_MAIL_KEY) draftOpened = openMailDraft(payload);
+
             if (submitBtn) {
                 submitBtn.disabled = true;
-                submitBtn.textContent = "Saving your RSVP…";
+                submitBtn.textContent = "Sending your RSVP…";
+            }
+
+            // Mail the RSVP to the organiser. This runs independently of the
+            // database so a Firestore failure never loses the enquiry.
+            const mailResult = await sendRsvpEmail(payload);
+
+            let saved = null;
+            let saveError = null;
+            try {
+                saved = (window.BlissDB && typeof window.BlissDB.addRsvp === "function")
+                    ? await withTimeout(window.BlissDB.addRsvp(payload), 8000)
+                    : saveRsvpLocally(payload);
+            } catch (error) {
+                saveError = error;
+            }
+
+            function addNote(text) {
+                const note = document.createElement("span");
+                note.textContent = text;
+                if (successBox) successBox.appendChild(note);
             }
 
             try {
-                const result = (window.BlissDB && typeof window.BlissDB.addRsvp === "function")
-                    ? await window.BlissDB.addRsvp(payload)
-                    : saveRsvpLocally(payload);
+                if (saved) {
+                    if (successBox) {
+                        successBox.hidden = false;
+                        successBox.textContent = "RSVP saved successfully. Booking ID: " + saved.id;
+                        addNote(saved.local
+                            ? "Saved on this device in demo mode. Add your Firebase keys to store bookings online."
+                            : "We have saved your booking. Our team will contact you shortly.");
+                        addNote(mailResult.ok
+                            ? "A copy of your RSVP was emailed to the event team."
+                            : draftOpened
+                                ? "A pre-filled email to the event team is open in a new tab — press Send to deliver it."
+                                : "Use “Send this RSVP by email” below so the event team receives it.");
+                    }
 
-                if (successBox) {
-                    successBox.hidden = false;
-                    successBox.textContent = "RSVP saved successfully. Booking ID: " + result.id;
-                    const note = document.createElement("span");
-                    note.textContent = result.local
-                        ? "Saved on this device in demo mode. Add your Firebase keys to store bookings online."
-                        : "We have saved your booking. Our team will contact you shortly.";
-                    successBox.appendChild(note);
+                    if (!mailResult.ok && !draftOpened && successBox) {
+                        const link = document.createElement("a");
+                        link.href = gmailComposeUrl(payload);
+                        link.target = "_blank";
+                        link.rel = "noopener";
+                        link.textContent = "Send this RSVP by email";
+                        link.style.display = "inline-block";
+                        link.style.marginTop = "8px";
+                        successBox.appendChild(link);
+                    }
+                } else if (mailResult.ok) {
+                    if (successBox) {
+                        successBox.hidden = false;
+                        successBox.textContent = "Your RSVP was emailed to the event team.";
+                        addNote("It could not be saved to the online database right now, but we have your details.");
+                    }
+                } else if (draftOpened) {
+                    if (successBox) {
+                        successBox.hidden = false;
+                        successBox.textContent = "Your RSVP email is ready in a new tab — press Send to deliver it.";
+                        addNote((saveError && saveError.message) || "The online copy could not be saved.");
+                    }
+                } else if (submitError) {
+                    const reason = (saveError && saveError.message) || "Could not save your RSVP.";
+                    submitError.textContent = reason + " Email delivery also failed, so please try again.";
                 }
 
-                rsvpForm.reset();
+                if (saved || mailResult.ok || draftOpened) {
+                    rsvpForm.reset();
 
-                if (dishesDecorSummary) dishesDecorSummary.value = "";
-                if (totalCostDisplay) totalCostDisplay.textContent = "";
-                if (advancePaymentDisplay) advancePaymentDisplay.textContent = "";
-                currentTotalCost = 0;
-                currentAdvancePayment = 0;
+                    if (dishesDecorSummary) dishesDecorSummary.value = "";
+                    if (totalCostDisplay) totalCostDisplay.textContent = "";
+                    if (advancePaymentDisplay) advancePaymentDisplay.textContent = "";
+                    currentTotalCost = 0;
+                    currentAdvancePayment = 0;
 
-                allCheckboxes.forEach((checkbox) => checkbox.checked = false);
-                quantityInputs.forEach((input) => {
-                    input.value = 0;
-                    input.parentElement.style.display = "none";
-                });
+                    allCheckboxes.forEach((checkbox) => checkbox.checked = false);
+                    quantityInputs.forEach((input) => {
+                        input.value = 0;
+                        input.parentElement.style.display = "none";
+                    });
 
-                if (selectDecorItemsBtn) selectDecorItemsBtn.style.display = "none";
-            } catch (error) {
-                if (submitError) {
-                    submitError.textContent = error.message || "Could not save your RSVP. Please try again.";
+                    if (selectDecorItemsBtn) selectDecorItemsBtn.style.display = "none";
                 }
             } finally {
                 if (submitBtn) {
