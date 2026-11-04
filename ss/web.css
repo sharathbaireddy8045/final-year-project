@@ -136,7 +136,7 @@ input.nav-tab-engine {
     text-transform: uppercase;
 }
 
-.brand-wordmark span {
+.brand-wordmark .brand-initial {
     color: var(--accent);
     text-shadow: 0 0 26px rgba(var(--accent-rgb), 0.45);
 }
