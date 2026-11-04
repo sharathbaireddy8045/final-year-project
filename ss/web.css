@@ -992,7 +992,7 @@ form.rsvp-form-container .btn {
 .back-to-top {
     position: fixed;
     right: 24px;
-    bottom: 24px;
+    bottom: 98px;
     z-index: 99;
     display: none;
     padding: 11px 17px;
@@ -1415,5 +1415,490 @@ form.rsvp-form-container .btn {
     .navbar label {
         font-size: 11.5px;
         padding: 7px 10px;
+    }
+}
+
+/* ========== Bliss AI planner ========== */
+.bliss-chat {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 9500;
+    font-family: inherit;
+    color: var(--text);
+}
+
+.bliss-chat-launcher {
+    position: relative;
+    width: 62px;
+    height: 62px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(145deg, rgba(var(--accent-rgb), 1), rgba(var(--accent-rgb), 0.72));
+    color: #14110a;
+    border: 1px solid rgba(var(--accent-rgb), 0.65);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 16px 38px rgba(0, 0, 0, 0.5), 0 0 0 7px rgba(var(--accent-rgb), 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bliss-chat-launcher:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 20px 44px rgba(0, 0, 0, 0.55), 0 0 0 9px rgba(var(--accent-rgb), 0.12);
+}
+
+.bliss-chat-launcher:active {
+    transform: scale(0.97);
+}
+
+.bliss-chat-launcher::before {
+    content: "";
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 1px solid rgba(var(--accent-rgb), 0.55);
+    animation: blissPulse 2.8s ease-out infinite;
+    pointer-events: none;
+}
+
+.bliss-chat-launcher-icon {
+    width: 28px;
+    height: 28px;
+    display: block;
+}
+
+.bliss-chat-badge {
+    position: absolute;
+    top: -3px;
+    right: -2px;
+    min-width: 24px;
+    height: 20px;
+    padding: 0 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--page-bg);
+    color: var(--accent);
+    border: 1px solid rgba(var(--accent-rgb), 0.55);
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+}
+
+.bliss-chat-teaser {
+    position: absolute;
+    right: 74px;
+    bottom: 12px;
+    max-width: 220px;
+    padding: 9px 13px;
+    background: var(--panel);
+    color: var(--text);
+    border: 1px solid var(--panel-border);
+    border-radius: 14px 14px 4px 14px;
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1.5;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+    cursor: pointer;
+    animation: blissTeaserIn 0.3s ease both;
+}
+
+.bliss-chat-panel {
+    position: absolute;
+    right: 0;
+    bottom: 78px;
+    width: 392px;
+    max-width: calc(100vw - 32px);
+    height: min(620px, calc(100vh - 120px));
+    display: flex;
+    flex-direction: column;
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(var(--accent-rgb), 0.08);
+    animation: blissChatIn 0.24s cubic-bezier(0.2, 0.85, 0.3, 1) both;
+}
+
+.bliss-chat-head {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 13px 14px;
+    background:
+        radial-gradient(circle at 0% 0%, rgba(var(--accent-rgb), 0.20), transparent 62%),
+        var(--panel-2);
+    border-bottom: 1px solid var(--panel-border);
+}
+
+.bliss-chat-avatar {
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(145deg, rgba(var(--accent-rgb), 0.95), rgba(var(--accent-rgb), 0.55));
+    color: #14110a;
+    border-radius: 50%;
+    font-size: 17px;
+    font-weight: 800;
+    box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.12);
+}
+
+.bliss-chat-id {
+    flex: 1;
+    min-width: 0;
+}
+
+.bliss-chat-title {
+    font-size: 14.5px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+}
+
+.bliss-chat-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 11.5px;
+}
+
+.bliss-chat-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #4ade80;
+    box-shadow: 0 0 8px rgba(74, 222, 128, 0.8);
+}
+
+.bliss-chat-icon {
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 34px;
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid transparent;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: color 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+}
+
+.bliss-chat-icon svg {
+    width: 17px;
+    height: 17px;
+    display: block;
+}
+
+.bliss-chat-icon:hover {
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--panel-border);
+}
+
+.bliss-chat-log {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 16px 14px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    background:
+        radial-gradient(circle at 100% 0%, rgba(var(--accent-rgb), 0.06), transparent 46%),
+        var(--panel);
+    scrollbar-width: thin;
+    scrollbar-color: var(--panel-border) transparent;
+}
+
+.bliss-chat-log::-webkit-scrollbar {
+    width: 6px;
+}
+
+.bliss-chat-log::-webkit-scrollbar-thumb {
+    background: var(--panel-border);
+    border-radius: 999px;
+}
+
+.bliss-msg {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    animation: blissMsgIn 0.18s ease both;
+}
+
+.bliss-msg--user {
+    justify-content: flex-end;
+}
+
+.bliss-msg-avatar {
+    width: 25px;
+    height: 25px;
+    flex: 0 0 25px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2px;
+    background: rgba(var(--accent-rgb), 0.16);
+    color: var(--accent);
+    border: 1px solid rgba(var(--accent-rgb), 0.35);
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.bliss-bubble {
+    max-width: calc(100% - 36px);
+    padding: 10px 13px;
+    background: var(--panel-2);
+    color: var(--text);
+    border: 1px solid var(--panel-border);
+    border-radius: 4px 16px 16px 16px;
+    font-size: 13.5px;
+    line-height: 1.62;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.bliss-bubble strong {
+    color: var(--text);
+    font-weight: 700;
+}
+
+.bliss-bubble em {
+    color: var(--muted);
+}
+
+.bliss-msg--user .bliss-bubble {
+    background: rgba(var(--accent-rgb), 0.92);
+    color: #14110a;
+    border-color: rgba(var(--accent-rgb), 0.7);
+    border-radius: 16px 4px 16px 16px;
+}
+
+.bliss-msg--user .bliss-bubble strong {
+    color: #14110a;
+}
+
+.bliss-bubble--typing {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 13px 15px;
+}
+
+.bliss-bubble--typing span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--muted);
+    animation: blissTyping 1.2s infinite ease-in-out;
+}
+
+.bliss-bubble--typing span:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.bliss-bubble--typing span:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.bliss-chat-quick {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    padding: 4px 14px 10px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    flex: 0 0 auto;
+}
+
+.bliss-chat-quick::-webkit-scrollbar {
+    display: none;
+}
+
+.bliss-quick-btn {
+    flex: 0 0 auto;
+    padding: 7px 12px;
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid rgba(var(--accent-rgb), 0.4);
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+
+.bliss-quick-btn:hover {
+    background: rgba(var(--accent-rgb), 0.14);
+    border-color: rgba(var(--accent-rgb), 0.75);
+}
+
+.bliss-chat-form {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    padding: 10px 12px 4px;
+    border-top: 1px solid var(--panel-border);
+    background: var(--panel);
+    flex: 0 0 auto;
+}
+
+.bliss-chat-form textarea {
+    flex: 1;
+    min-height: 42px;
+    max-height: 110px;
+    padding: 10px 14px;
+    background: var(--panel-2);
+    color: var(--text);
+    border: 1px solid var(--panel-border);
+    border-radius: 18px;
+    font-family: inherit;
+    font-size: 13.5px;
+    line-height: 1.5;
+    resize: none;
+    outline: none;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.bliss-chat-form textarea:focus {
+    border-color: rgba(var(--accent-rgb), 0.6);
+    box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.10);
+}
+
+.bliss-chat-form textarea::placeholder {
+    color: var(--muted);
+}
+
+.bliss-chat-send {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent);
+    color: #14110a;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(var(--accent-rgb), 0.28);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.bliss-chat-send svg {
+    width: 19px;
+    height: 19px;
+    display: block;
+}
+
+.bliss-chat-send:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 24px rgba(var(--accent-rgb), 0.4);
+}
+
+.bliss-chat-send:active {
+    transform: scale(0.95);
+}
+
+.bliss-chat-foot {
+    padding: 0 14px 9px;
+    color: var(--muted);
+    font-size: 10.5px;
+    line-height: 1.4;
+    text-align: center;
+    background: var(--panel);
+    flex: 0 0 auto;
+}
+
+@keyframes blissChatIn {
+    from { opacity: 0; transform: translateY(14px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes blissMsgIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes blissTeaserIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes blissPulse {
+    0% { opacity: 0.8; transform: scale(0.96); }
+    70% { opacity: 0; transform: scale(1.28); }
+    100% { opacity: 0; transform: scale(1.28); }
+}
+
+@keyframes blissTyping {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.45; }
+    30% { transform: translateY(-4px); opacity: 1; }
+}
+
+@media (max-width: 560px) {
+    .bliss-chat {
+        right: 14px;
+        bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .bliss-chat-launcher {
+        width: 56px;
+        height: 56px;
+    }
+
+    .bliss-chat-launcher-icon {
+        width: 25px;
+        height: 25px;
+    }
+
+    .bliss-chat-panel {
+        position: fixed;
+        left: 10px;
+        right: 10px;
+        bottom: calc(82px + env(safe-area-inset-bottom, 0px));
+        width: auto;
+        max-width: none;
+        height: min(74vh, 570px);
+        border-radius: 20px;
+    }
+
+    .bliss-chat-teaser {
+        right: 68px;
+        bottom: 10px;
+        max-width: 190px;
+        font-size: 12px;
+    }
+
+    .bliss-bubble {
+        font-size: 13px;
+    }
+
+    .back-to-top {
+        right: 16px;
+        bottom: 84px;
+    }
+}
+
+@media (max-height: 640px) {
+    .bliss-chat-panel {
+        height: calc(100vh - 108px);
     }
 }
