@@ -51,7 +51,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // ===============================
     if (goToDecorBtn) {
         goToDecorBtn.addEventListener("click", () => {
-            if (!validateBasicForm()) return;
             decorTab.checked = true;
             window.scrollTo({ top: 0, behavior: "smooth" });
         });
