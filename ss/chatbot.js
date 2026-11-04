@@ -17,6 +17,7 @@
         ctx: emptyContext(),
         plan: null,
         messages: [],
+        owner: null,        // account (uid) that owns this conversation
         pending: null,      // 'book' | 'applyBook'
         expect: null,       // 'name' | 'email' | 'guests' | 'budget' | 'occasion'
         booking: false,
@@ -487,6 +488,7 @@
     function saveState() {
         try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                owner: state.owner || null,
                 ctx: state.ctx,
                 plan: state.plan,
                 messages: state.messages.slice(-MAX_STORED_MESSAGES)
@@ -502,6 +504,15 @@
             saved = null;
         }
         if (!saved) return;
+
+        // Conversations belong to the account that started them.
+        var key = identityKey();
+        if (saved.owner && key && saved.owner !== key) {
+            try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+            return;
+        }
+        state.owner = saved.owner || null;
+
         if (saved.ctx && typeof saved.ctx === 'object') {
             state.ctx = Object.assign(emptyContext(), saved.ctx);
             if (!Array.isArray(state.ctx.favorites)) state.ctx.favorites = [];
@@ -925,6 +936,45 @@
         }
     }
 
+    function identityKey() {
+        var user = currentUser();
+        if (!user) return null;
+        return user.uid || user.email || user.name || null;
+    }
+
+    /**
+     * Keeps the conversation tied to the current account. Called whenever the
+     * planner opens: a different guest/login (or an unattributed conversation
+     * from an older build) starts from a clean chat.
+     */
+    function adoptIdentity() {
+        var key = identityKey();
+        if (!key) return false;
+        if (state.owner === key) return false;
+
+        if (!state.owner && !state.messages.length) {
+            state.owner = key;
+            saveState();
+            return false;
+        }
+
+        state.ctx = emptyContext();
+        state.plan = null;
+        state.pending = null;
+        state.expect = null;
+        state.booking = false;
+        state.applied = false;
+        state.messages = [];
+        state.owner = key;
+        try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+        seedIdentity();
+        if (els.log) els.log.innerHTML = '';
+        welcome();
+        renderQuickForContext();
+        saveState();
+        return true;
+    }
+
     function seedIdentity() {
         var user = currentUser();
         if (!user) return;
@@ -1078,12 +1128,13 @@
 
     function openChat() {
         if (!els.panel) return;
+        adoptIdentity();
         hideTeaser();
         closeSitePanels();
         els.panel.hidden = false;
         state.open = true;
         setLauncherOpen(true);
-        if (!state.started) {
+        if (!state.started || !state.messages.length) {
             state.started = true;
             if (!state.messages.length) welcome();
         }
@@ -1116,6 +1167,7 @@
         state.booking = false;
         state.applied = false;
         state.messages = [];
+        state.owner = identityKey();
         try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
         seedIdentity();
         if (els.log) els.log.innerHTML = '';
@@ -1126,7 +1178,8 @@
 
     function welcome() {
         var user = currentUser();
-        var name = state.ctx.name || (user && !user.isAnonymous && user.displayName ? user.displayName.split(' ')[0] : '');
+        var known = state.ctx.name || (user && !user.isAnonymous && user.displayName ? user.displayName : '');
+        var name = known ? String(known).trim().split(/\s+/)[0] : '';
         var hello = name ? 'Hi ' + name + '!' : 'Hi there!';
         addMessage('bot',
             hello + ' I am **Bliss**, your AI event planner. 🎉\n' +
