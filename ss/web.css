@@ -1509,8 +1509,8 @@ form.rsvp-form-container .btn {
 
 .bliss-chat-launcher {
     position: relative;
-    width: 62px;
-    height: 62px;
+    width: 50px;
+    height: 50px;
     padding: 0;
     display: flex;
     align-items: center;
@@ -1520,13 +1520,13 @@ form.rsvp-form-container .btn {
     border: 1px solid rgba(var(--accent-rgb), 0.65);
     border-radius: 50%;
     cursor: pointer;
-    box-shadow: 0 16px 38px rgba(0, 0, 0, 0.5), 0 0 0 7px rgba(var(--accent-rgb), 0.08);
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.5), 0 0 0 5px rgba(var(--accent-rgb), 0.08);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .bliss-chat-launcher:hover {
     transform: translateY(-2px) scale(1.03);
-    box-shadow: 0 20px 44px rgba(0, 0, 0, 0.55), 0 0 0 9px rgba(var(--accent-rgb), 0.12);
+    box-shadow: 0 18px 38px rgba(0, 0, 0, 0.55), 0 0 0 7px rgba(var(--accent-rgb), 0.12);
 }
 
 .bliss-chat-launcher:active {
@@ -1544,8 +1544,8 @@ form.rsvp-form-container .btn {
 }
 
 .bliss-chat-launcher-icon {
-    width: 28px;
-    height: 28px;
+    width: 23px;
+    height: 23px;
     display: block;
 }
 
@@ -1571,8 +1571,8 @@ form.rsvp-form-container .btn {
 
 .bliss-chat-teaser {
     position: absolute;
-    right: 74px;
-    bottom: 12px;
+    right: 62px;
+    bottom: 10px;
     max-width: 220px;
     padding: 9px 13px;
     background: var(--panel);
@@ -1939,13 +1939,13 @@ form.rsvp-form-container .btn {
     }
 
     .bliss-chat-launcher {
-        width: 56px;
-        height: 56px;
+        width: 46px;
+        height: 46px;
     }
 
     .bliss-chat-launcher-icon {
-        width: 25px;
-        height: 25px;
+        width: 21px;
+        height: 21px;
     }
 
     .bliss-chat-panel {
@@ -1960,8 +1960,8 @@ form.rsvp-form-container .btn {
     }
 
     .bliss-chat-teaser {
-        right: 68px;
-        bottom: 10px;
+        right: 58px;
+        bottom: 8px;
         max-width: 190px;
         font-size: 12px;
     }
