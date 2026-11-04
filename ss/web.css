@@ -127,13 +127,15 @@ input.nav-tab-engine {
 }
 
 .brand-wordmark {
+    font-family: 'Playfair Display', 'Didot', 'Bodoni MT', Georgia, 'Times New Roman', serif;
     font-size: clamp(1.9rem, 4.2vw, 3.4rem);
-    font-weight: 800;
-    letter-spacing: 0.16em;
+    font-weight: 700;
+    letter-spacing: 0.085em;
     line-height: 1;
     color: #ffffff;
     white-space: nowrap;
     text-transform: uppercase;
+    text-rendering: optimizeLegibility;
 }
 
 .brand-wordmark .brand-initial {
@@ -527,6 +529,56 @@ input.nav-tab-engine {
     letter-spacing: -0.01em;
 }
 
+#home h1.hero-title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    font-weight: 400;
+    line-height: 1.04;
+    letter-spacing: 0;
+}
+
+.hero-eyebrow {
+    margin-left: 0.44em;
+    color: var(--muted);
+    font-family: 'Jost', 'Century Gothic', 'Futura', 'Segoe UI', sans-serif;
+    font-size: clamp(0.72rem, 1.05vw, 0.84rem);
+    font-weight: 500;
+    letter-spacing: 0.44em;
+    text-transform: uppercase;
+}
+
+.hero-name {
+    color: #fdfaf2;
+    font-family: 'Playfair Display', 'Didot', 'Bodoni MT', Georgia, 'Times New Roman', serif;
+    font-size: clamp(2.3rem, 5.4vw, 4rem);
+    font-weight: 700;
+    line-height: 1.04;
+    letter-spacing: 0.01em;
+    text-wrap: balance;
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+    .hero-name {
+        background: linear-gradient(96deg, #ffffff 4%, var(--accent) 60%, #f3dfa0 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+    }
+}
+
+@media (max-width: 560px) {
+    .hero-eyebrow {
+        margin-left: 0.32em;
+        letter-spacing: 0.32em;
+    }
+    .hero-name {
+        font-size: clamp(1.8rem, 8.6vw, 2.4rem);
+    }
+}
+
 #home p {
     margin: 16px 0 4px;
     color: var(--muted);
@@ -760,8 +812,14 @@ input.nav-tab-engine {
 /* ========== Venue ========== */
 .venue-item {
     width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
     padding: 0;
-    text-align: left;
+    text-align: center;
+}
+
+.venue-item .section-title {
+    justify-content: center;
 }
 
 .venue-item p {
@@ -777,7 +835,7 @@ input.nav-tab-engine {
 .venue-item img.qr-img {
     width: 160px;
     height: 160px;
-    margin: 18px 0;
+    margin: 18px auto;
     display: block;
     background: #ffffff;
     border: 1px solid var(--panel-border);
@@ -944,7 +1002,18 @@ form.rsvp-form-container .btn {
 }
 
 .back-btn {
-    max-width: 230px;
+    max-width: 190px;
+}
+
+.menu-detail-page .back-btn {
+    align-self: flex-start;
+    width: auto;
+    max-width: 176px;
+    margin-top: 0;
+    padding: 8px 15px;
+    font-size: 12.5px;
+    letter-spacing: 0.03em;
+    border-radius: 11px;
 }
 
 /* ========== Image modal ========== */
@@ -991,8 +1060,10 @@ form.rsvp-form-container .btn {
 /* ========== Back to top ========== */
 .back-to-top {
     position: fixed;
-    right: 24px;
-    bottom: 98px;
+    left: 50%;
+    right: auto;
+    bottom: 22px;
+    transform: translateX(-50%);
     z-index: 99;
     display: none;
     padding: 11px 17px;
@@ -1011,30 +1082,38 @@ form.rsvp-form-container .btn {
 .menu-detail-page {
     width: 100%;
     padding: 0;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
 
 .detail-title {
-    margin: 15px 0;
+    margin: 6px 0 16px;
     color: #ffffff;
-    font-size: 24px;
+    font-size: clamp(1.35rem, 2.4vw, 1.6rem);
     font-weight: 700;
+    text-align: center;
 }
 
 .detail-image {
+    display: block;
     max-width: 100%;
     width: 350px;
     height: auto;
-    margin-bottom: 15px;
+    margin: 0 auto 16px;
     border: 1px solid var(--panel-border);
     border-radius: 18px;
 }
 
 .detail-description,
 .detail-additional {
-    margin: 10px 0;
+    width: 100%;
+    max-width: 620px;
+    margin: 10px auto;
     color: var(--muted);
     font-size: 14.5px;
     line-height: 1.6;
+    text-align: center;
 }
 
 /* ========== Toast ========== */
@@ -1892,8 +1971,9 @@ form.rsvp-form-container .btn {
     }
 
     .back-to-top {
-        right: 16px;
-        bottom: 84px;
+        left: 50%;
+        right: auto;
+        bottom: 18px;
     }
 }
 

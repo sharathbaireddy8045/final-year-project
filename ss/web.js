@@ -423,7 +423,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (item && mainDecorContent && detailPage) {
                 mainDecorContent.style.display = "none";
-                detailPage.style.display = "block";
+                detailPage.style.display = "flex";
 
                 if (detailTitle) detailTitle.textContent = item.title;
                 if (detailImage && image) detailImage.src = image.src;
