@@ -354,6 +354,11 @@ input.nav-tab-engine {
     transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
+.theme-option span {
+    color: var(--swatch, var(--text));
+    transition: color 0.2s ease;
+}
+
 .theme-option:hover {
     background: rgba(255, 255, 255, 0.07);
     color: #ffffff;
