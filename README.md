@@ -6,13 +6,19 @@ The site is static (`ss/`). Sign-in uses Firebase Authentication and RSVPs are
 stored in Cloud Firestore when configured; both fall back to `localStorage`
 demo mode until then.
 
+> **Current project:** `bliss-and-blooms`. The web config is already filled in.
+> Enable **Authentication** and create **Firestore** as described below before
+> real sign-in and RSVP storage will work.
+
 ### 1. Create the Firebase app
 1. Create a project at <https://console.firebase.google.com>.
 2. Go to **Project settings → Your apps → Web app (`</>`)** and register the site.
 3. Copy the `firebaseConfig` object.
 
 ### 2. Add the keys
-Open `ss/firebase-config.js` and replace the `PASTE_...` values with your config:
+`ss/firebase-config.js` is already configured for the **bliss-and-blooms**
+project. To use a different Firebase project, replace it with that project's
+config:
 
 ```js
 window.FIREBASE_CONFIG = {
