@@ -11,7 +11,7 @@
     <script src="theme.js?v=3"></script>
     <script src="firebase-config.js?v=2"></script>
     <script type="module" src="auth.js?v=2"></script>
-    <script type="module" src="db.js?v=1"></script>
+    <script type="module" src="db.js?v=2"></script>
  <style>
         html, body { max-width: 100%; overflow-x: hidden; }
         img, video { max-width: 100%; height: auto; }
@@ -64,6 +64,10 @@
  <button class="account-item" id="myBookingsBtn" type="button">
  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
  <span>My Bookings</span>
+ </button>
+ <button class="account-item" id="allBookingsBtn" type="button" hidden>
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+ <span>All RSVPs (Host)</span>
  </button>
  <button class="account-item" id="manageAccountBtn" type="button">
  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.11-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 8.9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 8.96 4.6 1.7 1.7 0 0 0 10 3.05V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1z"/></svg>
@@ -760,6 +764,11 @@
              ? user.email
              : ((user.isGuest || user.type === 'guest') ? 'Guest session' : 'Signed in locally');
 
+         /* The organiser can see every RSVP; guests only see their own. */
+         var HOST_EMAILS = ['sharath.baireddy@gmail.com', 'sharathbaireddy8045@gmail.com'];
+         var viewerEmail = String(user.email || '').toLowerCase();
+         var isHost = !!viewerEmail && HOST_EMAILS.indexOf(viewerEmail) !== -1;
+
          var brandBtn = document.getElementById('brandBtn');
          var settingsBtn = document.getElementById('themeBtn');
          var themePanel = document.getElementById('themePanel');
@@ -852,6 +861,12 @@
          var bookingsList = document.getElementById('bookingsList');
          var bookingsSub = document.getElementById('bookingsSub');
          var bookingsClose = document.getElementById('bookingsClose');
+         var bookingsTitle = document.getElementById('bookingsTitle');
+         var allBookingsBtn = document.getElementById('allBookingsBtn');
+
+         if (allBookingsBtn && isHost) {
+             allBookingsBtn.hidden = false;
+         }
 
          function formatBookingDate(value) {
              var date = null;
@@ -868,10 +883,12 @@
              });
          }
 
-         function readLocalBookings() {
+         function readLocalBookings(all) {
              var list = [];
              try { list = JSON.parse(localStorage.getItem('blissRsvps') || '[]'); } catch (e) { list = []; }
              if (!Array.isArray(list)) return [];
+
+             if (all) return list;
 
              var email = (user.email || '').toLowerCase();
              if (!email) return list;
@@ -887,13 +904,15 @@
              document.body.style.overflow = '';
          }
 
-         function emptyBookings() {
+         function emptyBookings(all) {
              var box = document.createElement('div');
              box.className = 'bookings-empty';
              var title = document.createElement('strong');
-             title.textContent = 'No bookings yet';
+             title.textContent = all ? 'No RSVPs yet' : 'No bookings yet';
              box.appendChild(title);
-             box.appendChild(document.createTextNode('Choose your dishes and decor, then submit the RSVP form. Your bookings will appear here.'));
+             box.appendChild(document.createTextNode(all
+                 ? 'Guest responses will appear here as soon as someone submits the RSVP form.'
+                 : 'Choose your dishes and decor, then submit the RSVP form. Your bookings will appear here.'));
              bookingsList.appendChild(box);
          }
 
@@ -956,40 +975,51 @@
              bookingsList.appendChild(card);
          }
 
-         function showBookings(rows) {
+         function showBookings(rows, all) {
              bookingsList.innerHTML = '';
              if (!rows || !rows.length) {
-                 emptyBookings();
+                 emptyBookings(all);
                  return;
              }
              rows.forEach(renderBooking);
          }
 
-         function openBookings() {
+         function openBookings(mode) {
              if (!bookingsModal) return;
+             var showingAll = mode === 'all' && isHost;
              closePanels();
              bookingsModal.hidden = false;
              document.body.style.overflow = 'hidden';
-             bookingsSub.textContent = user.email ? user.email : 'Saved on this device';
+             if (bookingsTitle) bookingsTitle.textContent = showingAll ? 'All RSVPs' : 'My Bookings';
+             bookingsSub.textContent = showingAll
+                 ? 'Every guest response'
+                 : (user.email ? user.email : 'Saved on this device');
              bookingsList.innerHTML = '';
 
              var loading = document.createElement('div');
              loading.className = 'bookings-empty';
-             loading.textContent = 'Loading your bookings\u2026';
+             loading.textContent = showingAll ? 'Loading all RSVPs\u2026' : 'Loading your bookings\u2026';
              bookingsList.appendChild(loading);
 
-             var request = (window.BlissDB && typeof window.BlissDB.listMyRsvps === 'function')
-                 ? window.BlissDB.listMyRsvps()
-                 : Promise.resolve(readLocalBookings());
+             var request;
+             if (showingAll) {
+                 request = (window.BlissDB && typeof window.BlissDB.listAllRsvps === 'function')
+                     ? window.BlissDB.listAllRsvps()
+                     : Promise.resolve(readLocalBookings(true));
+             } else {
+                 request = (window.BlissDB && typeof window.BlissDB.listMyRsvps === 'function')
+                     ? window.BlissDB.listMyRsvps()
+                     : Promise.resolve(readLocalBookings(false));
+             }
 
              Promise.resolve(request)
-                 .then(showBookings)
+                 .then(function (rows) { showBookings(rows, showingAll); })
                  .catch(function (error) {
                      bookingsList.innerHTML = '';
                      var failed = document.createElement('div');
                      failed.className = 'bookings-empty';
                      var title = document.createElement('strong');
-                     title.textContent = 'Could not load bookings';
+                     title.textContent = showingAll ? 'Could not load RSVPs' : 'Could not load bookings';
                      failed.appendChild(title);
                      failed.appendChild(document.createTextNode(
                          (error && error.message) || 'Please try again in a moment.'
@@ -999,7 +1029,11 @@
          }
 
          if (document.getElementById('myBookingsBtn')) {
-             document.getElementById('myBookingsBtn').addEventListener('click', openBookings);
+             document.getElementById('myBookingsBtn').addEventListener('click', function () { openBookings('mine'); });
+         }
+
+         if (allBookingsBtn) {
+             allBookingsBtn.addEventListener('click', function () { openBookings('all'); });
          }
 
          if (bookingsClose) {

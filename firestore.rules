@@ -4,12 +4,23 @@ rules_version = '2';
 //
 //   * Any signed-in visitor (including anonymous guests) can create an RSVP.
 //   * A booking must belong to the account that created it.
-//   * Bookings can only be read by their owner.
+//   * Bookings can only be read by their owner, or by the event host.
 //   * Bookings are append-only: no editing or deleting from the browser.
 //
+// Update HOST_EMAILS below if the organiser's sign-in email changes.
 // Deploy with:  firebase deploy --only firestore:rules
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    function isHost() {
+      return request.auth != null
+        && request.auth.token.email is string
+        && request.auth.token.email.lower() in [
+             'sharath.baireddy@gmail.com',
+             'sharathbaireddy8045@gmail.com'
+           ];
+    }
+
     match /rsvps/{rsvpId} {
       allow create: if request.auth != null
         && request.resource.data.userId == request.auth.uid
@@ -18,8 +29,9 @@ service cloud.firestore {
         && request.resource.data.guests is int
         && request.resource.data.guests >= 1;
 
-      allow read: if request.auth != null
-        && resource.data.userId == request.auth.uid;
+      allow read: if isHost()
+        || (request.auth != null
+            && resource.data.userId == request.auth.uid);
 
       allow update, delete: if false;
     }

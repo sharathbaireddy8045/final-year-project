@@ -191,9 +191,38 @@ async function listMyRsvps() {
     return localRows;
 }
 
+async function listAllRsvps() {
+    var who = identity();
+
+    if (db) {
+        try {
+            var snapshot = await getDocs(collection(db, "rsvps"));
+            var rows = snapshot.docs.map(function (doc) {
+                var value = doc.data();
+                value.id = doc.id;
+                return value;
+            });
+            rows.sort(function (a, b) {
+                return toMillis(b.createdAt || b.clientCreatedAt) -
+                    toMillis(a.createdAt || a.clientCreatedAt);
+            });
+            return rows;
+        } catch (error) {
+            throw new Error(friendlyError(error));
+        }
+    }
+
+    var localRows = readLocalRsvps().slice();
+    localRows.sort(function (a, b) {
+        return toMillis(b.createdAt) - toMillis(a.createdAt);
+    });
+    return localRows;
+}
+
 window.BlissDB = {
     isConfigured: Boolean(db),
     identity: identity,
     addRsvp: addRsvp,
-    listMyRsvps: listMyRsvps
+    listMyRsvps: listMyRsvps,
+    listAllRsvps: listAllRsvps
 };
