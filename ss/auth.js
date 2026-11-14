@@ -79,6 +79,16 @@ var ERROR_MESSAGES = {
 
 function friendlyError(error) {
     if (!error) return "Something went wrong. Please try again.";
+
+    if (error.code === "auth/unauthorized-domain") {
+        var host = "";
+        try { host = window.location.hostname || ""; } catch (e) { host = ""; }
+        if (!host) return ERROR_MESSAGES["auth/unauthorized-domain"];
+        return "Google sign-in is not enabled for " + host + " yet. Add \u201c" + host +
+            "\u201d under Firebase \u2192 Authentication \u2192 Settings \u2192 Authorized domains. " +
+            "Guest Mode and Email & Password keep working on this site.";
+    }
+
     if (error.code && ERROR_MESSAGES[error.code]) return ERROR_MESSAGES[error.code];
     return error.message || "Something went wrong. Please try again.";
 }
