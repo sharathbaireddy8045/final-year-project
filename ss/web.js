@@ -262,12 +262,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // ===============================
     // RSVP EMAIL DELIVERY
     // ===============================
+    // Every RSVP is emailed to the organiser's single inbox. The site is static,
+    // so FormSubmit relays the message (no API key needed). The very first
+    // submission sends a one-time activation link to this address; after it is
+    // clicked, all later RSVPs arrive automatically.
     const RSVP_MAIL_TO = "sharath.baireddy@gmail.com";
-
-    // Free access key from https://web3forms.com (create it with the Gmail
-    // address above). Once pasted here, every RSVP is emailed automatically.
-    // While it is empty, submitting opens a pre-filled Gmail draft instead.
-    const RSVP_MAIL_KEY = "";
 
     function formatRupees(value) {
         return "₹" + Number(value || 0).toLocaleString("en-IN");
@@ -292,22 +291,6 @@ document.addEventListener("DOMContentLoaded", () => {
         ].join("\n");
     }
 
-    function gmailComposeUrl(payload) {
-        return "https://mail.google.com/mail/?view=cm&fs=1" +
-            "&to=" + encodeURIComponent(RSVP_MAIL_TO) +
-            "&su=" + encodeURIComponent(rsvpMailSubject(payload)) +
-            "&body=" + encodeURIComponent(rsvpMailBody(payload));
-    }
-
-    function openMailDraft(payload) {
-        try {
-            const draft = window.open(gmailComposeUrl(payload), "_blank");
-            return !!draft;
-        } catch (error) {
-            return false;
-        }
-    }
-
     /**
      * Firestore can retry silently for a long time when the API is disabled, so
      * the booking save is capped to keep the submit button responsive.
@@ -322,28 +305,26 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /**
-     * Emails the RSVP to the organiser through Web3Forms (a static-site friendly
-     * mail relay). Failures are reported to the caller so the guest still gets a
-     * Gmail draft fallback.
+     * Emails the RSVP to the organiser through FormSubmit. It runs alongside the
+     * Firestore save so the host still receives the enquiry if the database is
+     * unavailable, and never opens a mail client.
      */
     async function sendRsvpEmail(payload) {
-        if (!RSVP_MAIL_KEY) return { ok: false, skipped: true };
-
         const controller = typeof AbortController === "function" ? new AbortController() : null;
         const timer = controller ? setTimeout(() => controller.abort(), 12000) : null;
 
         try {
-            const response = await fetch("https://api.web3forms.com/submit", {
+            const response = await fetch("https://formsubmit.co/ajax/" + RSVP_MAIL_TO, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "Accept": "application/json"
                 },
                 body: JSON.stringify({
-                    access_key: RSVP_MAIL_KEY,
-                    subject: rsvpMailSubject(payload),
-                    from_name: "Bliss Bloom Events",
-                    replyto: payload.email,
+                    _subject: rsvpMailSubject(payload),
+                    _template: "table",
+                    _captcha: "false",
+                    _replyto: payload.email,
                     Name: payload.name,
                     Email: payload.email,
                     Guests: payload.guests,
@@ -351,8 +332,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     "Total cost": formatRupees(payload.totalCost),
                     "Advance payment": formatRupees(payload.advancePayment),
                     Submitted: new Date().toLocaleString("en-IN"),
-                    message: rsvpMailBody(payload),
-                    botcheck: false
+                    Message: rsvpMailBody(payload)
                 }),
                 signal: controller ? controller.signal : undefined
             });
@@ -360,10 +340,9 @@ document.addEventListener("DOMContentLoaded", () => {
             let data = null;
             try { data = await response.json(); } catch (error) { data = null; }
 
-            return {
-                ok: !!(response.ok && data && data.success),
-                message: (data && data.message) || ""
-            };
+            const ok = !!(response.ok && data &&
+                (data.success === true || String(data.success) === "true"));
+            return { ok: ok, message: (data && data.message) || "" };
         } catch (error) {
             return { ok: false, message: "" };
         } finally {
@@ -407,10 +386,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 advancePayment: currentAdvancePayment
             };
 
-            // Without a Web3Forms key, prepare a Gmail draft while the click is
-            // still active so the browser permits the new tab.
-            let draftOpened = false;
-            if (!RSVP_MAIL_KEY) draftOpened = openMailDraft(payload);
+            // The RSVP is emailed automatically; no mail client is opened.
 
             if (submitBtn) {
                 submitBtn.disabled = true;
@@ -447,20 +423,9 @@ document.addEventListener("DOMContentLoaded", () => {
                             : "We have saved your booking. Our team will contact you shortly.");
                         addNote(mailResult.ok
                             ? "A copy of your RSVP was emailed to the event team."
-                            : draftOpened
-                                ? "A pre-filled email to the event team is open in a new tab — press Send to deliver it."
-                                : "Use “Send this RSVP by email” below so the event team receives it.");
-                    }
-
-                    if (!mailResult.ok && !draftOpened && successBox) {
-                        const link = document.createElement("a");
-                        link.href = gmailComposeUrl(payload);
-                        link.target = "_blank";
-                        link.rel = "noopener";
-                        link.textContent = "Send this RSVP by email";
-                        link.style.display = "inline-block";
-                        link.style.marginTop = "8px";
-                        successBox.appendChild(link);
+                            : /activation/i.test(mailResult.message || "")
+                                ? "Email delivery needs a one-time activation link — the event team has been notified."
+                                : "The email notification could not be sent, but your RSVP is saved.");
                     }
                 } else if (mailResult.ok) {
                     if (successBox) {
@@ -468,18 +433,12 @@ document.addEventListener("DOMContentLoaded", () => {
                         successBox.textContent = "Your RSVP was emailed to the event team.";
                         addNote("It could not be saved to the online database right now, but we have your details.");
                     }
-                } else if (draftOpened) {
-                    if (successBox) {
-                        successBox.hidden = false;
-                        successBox.textContent = "Your RSVP email is ready in a new tab — press Send to deliver it.";
-                        addNote((saveError && saveError.message) || "The online copy could not be saved.");
-                    }
                 } else if (submitError) {
                     const reason = (saveError && saveError.message) || "Could not save your RSVP.";
                     submitError.textContent = reason + " Email delivery also failed, so please try again.";
                 }
 
-                if (saved || mailResult.ok || draftOpened) {
+                if (saved || mailResult.ok) {
                     rsvpForm.reset();
 
                     if (dishesDecorSummary) dishesDecorSummary.value = "";
