@@ -185,6 +185,19 @@ document.addEventListener("DOMContentLoaded", () => {
     // ===============================
     // SELECTED ITEMS SNAPSHOT
     // ===============================
+    /*
+     * Firestore rejects a document containing `undefined`, so every field below
+     * must be filled in. Decoration checkboxes have no data-item-id, so an id is
+     * derived from the item name instead of leaving it undefined.
+     */
+    function slugify(value, fallback) {
+        const slug = String(value || "")
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-+|-+$/g, "");
+        return slug || fallback;
+    }
+
     function collectSelectedItems() {
         const items = [];
 
@@ -194,8 +207,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const quantity = qtyInput ? parseInt(qtyInput.value) || 0 : 0;
             const cost = parseInt(checkbox.dataset.itemCost) || 0;
             items.push({
-                id: checkbox.dataset.itemId,
-                name: checkbox.dataset.itemName,
+                id: checkbox.dataset.itemId || slugify(checkbox.dataset.itemName, "dish-" + items.length),
+                name: checkbox.dataset.itemName || "",
                 type: "dish",
                 quantity: quantity,
                 cost: cost,
@@ -207,8 +220,8 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!checkbox.checked) return;
             const cost = parseInt(checkbox.dataset.itemCost) || 0;
             items.push({
-                id: checkbox.dataset.itemId,
-                name: checkbox.dataset.itemName,
+                id: checkbox.dataset.itemId || slugify(checkbox.dataset.itemName, "decor-" + items.length),
+                name: checkbox.dataset.itemName || "",
                 type: "decor",
                 quantity: 1,
                 cost: cost,

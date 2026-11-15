@@ -106,6 +106,10 @@ function toMillis(value) {
 
 function friendlyError(error) {
     var code = error && error.code;
+    var message = String((error && error.message) || "");
+    if (/Unsupported field value: undefined/i.test(message)) {
+        return "One of the selected items is missing a detail, so the booking could not be saved. Please deselect and reselect your dishes and decor, then submit again.";
+    }
     if (code === "permission-denied") {
         return "Firestore blocked this request. Check that the rules in firestore.rules are deployed.";
     }
@@ -118,7 +122,28 @@ function friendlyError(error) {
     return (error && error.message) || "Could not save your RSVP. Please try again.";
 }
 
+/*
+ * Firestore rejects any field whose value is `undefined`, and the error it
+ * raises is unreadable to a guest. Dropping undefined values keeps the booking
+ * saveable and keeps stored documents clean.
+ */
+function stripUndefined(value) {
+    if (Array.isArray(value)) {
+        return value.map(stripUndefined);
+    }
+    if (value && typeof value === "object") {
+        var clean = {};
+        Object.keys(value).forEach(function (key) {
+            if (value[key] === undefined || typeof value[key] === "function") return;
+            clean[key] = stripUndefined(value[key]);
+        });
+        return clean;
+    }
+    return value;
+}
+
 async function addRsvp(data) {
+    data = data || {};
     var who = identity();
     var now = new Date().toISOString();
     var record = {
@@ -129,17 +154,17 @@ async function addRsvp(data) {
         items: data.items || [],
         totalCost: Number(data.totalCost) || 0,
         advancePayment: Number(data.advancePayment) || 0,
-        userId: who.uid,
-        userEmail: who.email,
-        userName: who.name,
-        anonymous: who.anonymous,
+        userId: who.uid || "",
+        userEmail: who.email || "",
+        userName: who.name || "",
+        anonymous: !!who.anonymous,
         status: "pending",
         clientCreatedAt: now
     };
 
     if (db) {
         try {
-            var ref = await addDoc(collection(db, "rsvps"), Object.assign({}, record, {
+            var ref = await addDoc(collection(db, "rsvps"), Object.assign(stripUndefined(record), {
                 createdAt: serverTimestamp()
             }));
             return { id: ref.id, local: false };
